@@ -1,0 +1,84 @@
+{
+  "kind": "collectionType",
+  "collectionName": "projects",
+  "info": {
+    "singularName": "project",
+    "pluralName": "projects",
+    "displayName": "Project",
+    "description": ""
+  },
+  "options": {
+    "draftAndPublish": true
+  },
+  "pluginOptions": {},
+  "attributes": {
+    "title": {
+      "type": "string",
+      "required": true,
+      "unique": true
+    },
+    "short_description": {
+      "type": "string",
+      "required": true
+    },
+    "description": {
+      "type": "text",
+      "required": true
+    },
+    "journey": {
+      "type": "blocks",
+      "required": false
+    },
+    "start_at": {
+      "type": "date",
+      "required": true
+    },
+    "finish_at": {
+      "type": "date",
+      "required": true
+    },
+    "cover": {
+      "type": "media",
+      "multiple": false,
+      "required": true,
+      "allowedTypes": [
+        "images"
+      ]
+    },
+    "preview": {
+      "type": "media",
+      "multiple": true,
+      "required": true,
+      "allowedTypes": [
+        "images"
+      ]
+    },
+    "label": {
+      "type": "enumeration",
+      "enum": [
+        "paid",
+        "personal",
+        "free"
+      ],
+      "required": true,
+      "default": "personal"
+    },
+    "tech_stacks": {
+      "type": "relation",
+      "relation": "manyToMany",
+      "target": "api::tech-skill.tech-skill",
+      "inversedBy": "projects"
+    },
+    "links": {
+      "type": "relation",
+      "relation": "oneToMany",
+      "target": "api::link.link",
+      "mappedBy": "project"
+    },
+    "is_selected": {
+      "type": "boolean",
+      "default": false,
+      "required": true
+    }
+  }
+}
