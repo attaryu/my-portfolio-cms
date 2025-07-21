@@ -1,6 +1,7 @@
 import type { IOwnerRepository } from '@/server/app/repositories/owner';
-import type { PrismaClient } from '../databases/prisma/generated/prisma';
+import type { Owner, PrismaClient } from '../databases/prisma/generated/prisma';
 
+import { OwnerUseCaseErrors } from '@/server/app/errors/use-cases/owner';
 import { OwnerEntity } from '@/server/domain/entities/owner';
 import { Email } from '@/server/domain/value-objects/email';
 import { Password } from '@/server/domain/value-objects/password';
@@ -8,21 +9,19 @@ import { Password } from '@/server/domain/value-objects/password';
 export class OwnerRepository implements IOwnerRepository {
 	constructor(private readonly db: PrismaClient) {}
 
+	async getOwnerById(id: string): Promise<OwnerEntity> {
+		const owner = await this.db.owner.findUnique({ where: { id } });
+
+		if (!owner) {
+			throw new OwnerUseCaseErrors.NotFound();
+		}
+
+		return this.mapper(owner);
+	}
+
 	async getOwnerByEmail(email: string): Promise<OwnerEntity | null> {
 		const owner = await this.db.owner.findUnique({ where: { email } });
-
-		return owner
-			? new OwnerEntity(
-					owner.id,
-					new Email(owner.email),
-					new Password(owner.password),
-					owner.address,
-					owner.coverUrl,
-					owner.refreshToken,
-					owner.createdAt,
-					owner.updatedAt
-			  )
-			: null;
+		return owner ? this.mapper(owner) : null;
 	}
 
 	async updateOwner(owner: OwnerEntity): Promise<void> {
@@ -36,5 +35,18 @@ export class OwnerRepository implements IOwnerRepository {
 				refreshToken: owner.refreshToken,
 			},
 		});
+	}
+
+	private mapper(owner: Owner): OwnerEntity {
+		return new OwnerEntity(
+			owner.id,
+			new Email(owner.email),
+			new Password(owner.password),
+			owner.address,
+			owner.coverUrl,
+			owner.refreshToken,
+			owner.createdAt,
+			owner.updatedAt
+		);
 	}
 }

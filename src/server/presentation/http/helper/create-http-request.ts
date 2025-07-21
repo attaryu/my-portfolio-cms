@@ -11,11 +11,20 @@ export async function createHTTPRequest(
 	const processedRequest = {
 		...request,
 		headers: await headers(),
-		body: await request.json(),
 		params: await params,
 		cookies: await cookies(),
+		body: {} as any,
 	};
-	
+
+	if (
+		request.method === 'POST' ||
+		request.method === 'PUT' ||
+		request.method === 'PATCH'
+	) {
+		const body = await request.json().catch(() => ({}));
+		processedRequest.body = body;
+	}
+
 	return processedRequest;
 }
 

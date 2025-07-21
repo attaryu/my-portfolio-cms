@@ -71,11 +71,11 @@ export class OwnerEntity {
 		return this._updatedAt;
 	}
 
-	set refreshToken(token: string) {
-		if (token === this._refreshToken) {
-			throw new Error('Refresh token is the same as the current one.');
-		}
-
+	set refreshToken(token: string | null) {
 		this._refreshToken = token;
+	}
+
+	public isRefreshTokenSame(refreshToken: string): boolean {
+		return this._refreshToken === refreshToken;
 	}
 }

@@ -83,6 +83,45 @@
           }
         }
       }
+    },
+    "/owner/logout": {
+      "post": {
+        "tags": [
+          "Owner"
+        ],
+        "description": "Owner logout endpoint",
+        "responses": {
+          "204": {
+            "description": "Successful logout",
+            "headers": {
+              "Set-Cookie": {
+                "description": "Clears session cookies on logout",
+                "schema": {
+                  "type": "string",
+                  "examples": [
+                    "ACCESS_TOKEN=; HttpOnly; Secure; Max-Age=0",
+                    "REFRESH_TOKEN=; HttpOnly; Secure; Max-Age=0"
+                  ]
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Not authenticated",
+            "content": {
+              "application/json": {
+                "example": {
+                  "success": false,
+                  "error": "Not authenticated"
+                }
+              }
+            }
+          },
+          "500": {
+            "$ref": "#/components/responses/InternalServerError"
+          }
+        }
+      }
     }
   },
   "components": {
