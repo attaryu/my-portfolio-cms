@@ -6,11 +6,110 @@
   },
   "servers": [
     {
-      "url": "http://localhost:5050/api/v1",
+      "url": "http://localhost:3000/api/v1",
       "description": "Local development server"
     }
   ],
-  "tags": [],
-  "paths": {},
-  "components": {}
+  "paths": {
+    "/owner/login": {
+      "post": {
+        "tags": [
+          "Owner"
+        ],
+        "description": "Owner authentication endpoint",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "email": {
+                    "type": "string",
+                    "format": "email",
+                    "example": "owner@example.com"
+                  },
+                  "password": {
+                    "type": "string",
+                    "format": "password",
+                    "example": "password123"
+                  }
+                },
+                "required": [
+                  "email",
+                  "password"
+                ]
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful authentication",
+            "headers": {
+              "Set-Cookie": {
+                "description": "Session cookie set on successful authentication",
+                "schema": {
+                  "type": "string",
+                  "examples": [
+                    "ACCESS_TOKEN=abc123; HttpOnly; Secure",
+                    "REFRESH_TOKEN=xyz789; HttpOnly; Secure"
+                  ]
+                }
+              }
+            },
+            "content": {
+              "application/json": {
+                "example": {
+                  "success": true,
+                  "message": "Authentication successful"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Invalid email or password",
+            "content": {
+              "application/json": {
+                "example": {
+                  "success": false,
+                  "error": "Invalid email or password"
+                }
+              }
+            }
+          },
+          "500": {
+            "$ref": "#/components/responses/InternalServerError"
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {},
+    "responses": {
+      "InternalServerError": {
+        "description": "Internal server error",
+        "content": {
+          "application/json": {
+            "example": {
+              "success": false,
+              "error": "An unexpected error occurred"
+            },
+            "schema": {
+              "type": "object",
+              "properties": {
+                "success": {
+                  "type": "boolean"
+                },
+                "error": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  }
 }

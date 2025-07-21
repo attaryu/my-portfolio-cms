@@ -1,4 +1,9 @@
+ignoredBuiltDependencies:
+  - '@prisma/engines'
+  - prisma
+
 onlyBuiltDependencies:
   - '@tailwindcss/oxide'
+  - bcrypt
   - sharp
   - unrs-resolver
