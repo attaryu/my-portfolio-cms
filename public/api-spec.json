@@ -67,7 +67,7 @@
               }
             }
           },
-          "401": {
+          "400": {
             "description": "Invalid email or password",
             "content": {
               "application/json": {
@@ -90,6 +90,17 @@
           "Owner"
         ],
         "description": "Owner logout endpoint",
+        "parameters": [
+          {
+            "in": "cookie",
+            "name": "REFRESH_TOKEN",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "example": "REFRESH_TOKEN=xyz789; HttpOnly; Secure"
+          }
+        ],
         "responses": {
           "204": {
             "description": "Successful logout",
@@ -107,15 +118,56 @@
             }
           },
           "401": {
-            "description": "Not authenticated",
+            "$ref": "#/components/responses/NotAuthenticated"
+          },
+          "500": {
+            "$ref": "#/components/responses/InternalServerError"
+          }
+        }
+      }
+    },
+    "/owner/access-token": {
+      "get": {
+        "tags": [
+          "Owner"
+        ],
+        "description": "Get access token for authenticated owner",
+        "parameters": [
+          {
+            "in": "cookie",
+            "name": "REFRESH_TOKEN",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "example": "REFRESH_TOKEN=xyz789; HttpOnly; Secure"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Access token retrieved successfully",
+            "headers": {
+              "Set-Cookie": {
+                "description": "Access token cookie set on successful retrieval",
+                "schema": {
+                  "type": "string",
+                  "examples": [
+                    "ACCESS_TOKEN=abc123; HttpOnly; Secure"
+                  ]
+                }
+              }
+            },
             "content": {
               "application/json": {
                 "example": {
-                  "success": false,
-                  "error": "Not authenticated"
+                  "success": true,
+                  "message": "Access token retrieved successfully"
                 }
               }
             }
+          },
+          "401": {
+            "$ref": "#/components/responses/NotAuthenticated"
           },
           "500": {
             "$ref": "#/components/responses/InternalServerError"
@@ -127,6 +179,28 @@
   "components": {
     "schemas": {},
     "responses": {
+      "NotAuthenticated": {
+        "description": "Not authenticated",
+        "content": {
+          "application/json": {
+            "example": {
+              "success": false,
+              "error": "Not authenticated"
+            },
+            "schema": {
+              "type": "object",
+              "properties": {
+                "success": {
+                  "type": "boolean"
+                },
+                "error": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        }
+      },
       "InternalServerError": {
         "description": "Internal server error",
         "content": {
