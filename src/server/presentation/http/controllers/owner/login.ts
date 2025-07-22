@@ -41,7 +41,7 @@ export class OwnerLoginController implements IController {
 
 			if (error instanceof OwnerUseCaseErrors.InvalidCredentials) {
 				return {
-					status: 401,
+					status: 400,
 					error: error.message,
 				};
 			}
