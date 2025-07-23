@@ -1,6 +1,7 @@
 import type { IOwnerRepository } from '@/server/app/repositories/owner';
 import type { ITokenManager } from '@/server/app/services/token-manager';
 import type { IOwnerLogoutUseCase } from '../logout';
+import { RefreshToken } from '@/server/domain/value-objects/refresh-token';
 
 export class OwnerLogoutUseCase implements IOwnerLogoutUseCase {
 	constructor(
@@ -14,7 +15,7 @@ export class OwnerLogoutUseCase implements IOwnerLogoutUseCase {
 
 		owner.refreshToken?.isSameAs(refreshToken);
 
-		owner.refreshToken = null;
+		owner.refreshToken = RefreshToken.create(undefined);
 		await this._ownerRepository.updateOwner(owner);
 	}
 }
