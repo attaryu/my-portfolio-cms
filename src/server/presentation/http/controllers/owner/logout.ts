@@ -6,7 +6,7 @@ import type { IController } from '../controller';
 import { OwnerUseCaseErrors } from '@/server/app/errors/use-cases/owner';
 import { TokenManagerErrors } from '@/server/infra/errors/services/token-manager';
 
-import { serverError } from '../../helper/server-error';
+import { HttpError } from '../../helper/http-error';
 
 export class OwnerLogoutController implements IController {
 	constructor(private readonly _ownerLogoutUseCase: IOwnerLogoutUseCase) {}
@@ -16,8 +16,9 @@ export class OwnerLogoutController implements IController {
 
 		if (!refreshToken) {
 			return {
-				status: 400,
-				error: 'No request token provided',
+				statusCode: 400,
+				status: 'fail',
+				message: 'No refresh token provided',
 			};
 		}
 
@@ -28,33 +29,26 @@ export class OwnerLogoutController implements IController {
 			request.cookies.delete('ACCESS_TOKEN');
 
 			return {
-				status: 204,
+				statusCode: 200,
+				status: 'success',
+				message: 'Logout successful',
 			};
 		} catch (error: any) {
 			console.error(error);
 
 			if (error instanceof OwnerUseCaseErrors.DifferentRefreshToken) {
-				return {
-					status: 400,
-					error: error.message,
-				};
+				throw HttpError.forbidden(error.message);
 			}
 
 			if (error instanceof TokenManagerErrors.InvalidToken) {
-				return {
-					status: 401,
-					error: error.message,
-				};
+				throw HttpError.unauthorized(error.message);
 			}
 
 			if (error instanceof OwnerUseCaseErrors.NotFound) {
-				return {
-					status: 404,
-					error: error.message,
-				};
+				throw HttpError.notFound(error.message);
 			}
 
-			return serverError(error);
+			throw HttpError.internalServerError();
 		}
 	}
 }

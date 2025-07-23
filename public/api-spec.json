@@ -60,8 +60,11 @@
             },
             "content": {
               "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SuccessResponse"
+                },
                 "example": {
-                  "success": true,
+                  "status": "success",
                   "message": "Authentication successful"
                 }
               }
@@ -71,9 +74,12 @@
             "description": "Invalid email or password",
             "content": {
               "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/FailureResponse"
+                },
                 "example": {
-                  "success": false,
-                  "error": "Invalid email or password"
+                  "status": "fail",
+                  "message": "Invalid email or password"
                 }
               }
             }
@@ -102,7 +108,7 @@
           }
         ],
         "responses": {
-          "204": {
+          "200": {
             "description": "Successful logout",
             "headers": {
               "Set-Cookie": {
@@ -115,10 +121,21 @@
                   ]
                 }
               }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SuccessResponse"
+                },
+                "example": {
+                  "status": "success",
+                  "message": "Logout successful"
+                }
+              }
             }
           },
           "401": {
-            "$ref": "#/components/responses/NotAuthenticated"
+            "$ref": "#/components/responses/Unauthenticated"
           },
           "500": {
             "$ref": "#/components/responses/InternalServerError"
@@ -159,15 +176,18 @@
             },
             "content": {
               "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SuccessResponse"
+                },
                 "example": {
-                  "success": true,
+                  "status": "success",
                   "message": "Access token retrieved successfully"
                 }
               }
             }
           },
           "401": {
-            "$ref": "#/components/responses/NotAuthenticated"
+            "$ref": "#/components/responses/Unauthenticated"
           },
           "500": {
             "$ref": "#/components/responses/InternalServerError"
@@ -177,26 +197,91 @@
     }
   },
   "components": {
-    "schemas": {},
+    "schemas": {
+      "SuccessResponse": {
+        "type": "object",
+        "description": "Standard response for successful operations",
+        "required": [
+          "status",
+          "message",
+          "data"
+        ],
+        "properties": {
+          "status": {
+            "type": "string",
+            "default": "success"
+          },
+          "message": {
+            "type": "string"
+          },
+          "data": {
+            "additionalProperties": true,
+            "oneOf": [
+              {
+                "type": "object"
+              },
+              {
+                "type": "array",
+                "items": {
+                  "type": "object"
+                }
+              }
+            ]
+          }
+        }
+      },
+      "FailureResponse": {
+        "type": "object",
+        "description": "Standard failure response format",
+        "required": [
+          "status",
+          "message"
+        ],
+        "properties": {
+          "status": {
+            "type": "string",
+            "default": "fail",
+            "description": "Indicates a failure occurred"
+          },
+          "message": {
+            "type": "string"
+          }
+        }
+      },
+      "ErrorResponse": {
+        "type": "object",
+        "description": "Standard error response format",
+        "required": [
+          "status",
+          "message"
+        ],
+        "properties": {
+          "status": {
+            "type": "string",
+            "default": "error",
+            "description": "Indicates an error occurred"
+          },
+          "message": {
+            "type": "string"
+          },
+          "error": {
+            "type": "string",
+            "description": "Error message"
+          }
+        }
+      }
+    },
     "responses": {
-      "NotAuthenticated": {
+      "Unauthenticated": {
         "description": "Not authenticated",
         "content": {
           "application/json": {
-            "example": {
-              "success": false,
-              "error": "Not authenticated"
-            },
             "schema": {
-              "type": "object",
-              "properties": {
-                "success": {
-                  "type": "boolean"
-                },
-                "error": {
-                  "type": "string"
-                }
-              }
+              "$ref": "#/components/schemas/FailureResponse"
+            },
+            "example": {
+              "status": "error",
+              "message": "Not authenticated"
             }
           }
         }
@@ -206,19 +291,11 @@
         "content": {
           "application/json": {
             "example": {
-              "success": false,
-              "error": "An unexpected error occurred"
+              "status": "error",
+              "message": "An unexpected error occurred"
             },
             "schema": {
-              "type": "object",
-              "properties": {
-                "success": {
-                  "type": "boolean"
-                },
-                "error": {
-                  "type": "string"
-                }
-              }
+              "$ref": "#/components/schemas/ErrorResponse"
             }
           }
         }

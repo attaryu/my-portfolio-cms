@@ -6,21 +6,41 @@ import type { HTTPParams } from '../helper/create-http-request';
 import { NextResponse } from 'next/server';
 
 import { createHTTPRequest } from '../helper/create-http-request';
+import { HttpError } from '../helper/http-error';
+import { IResponse } from '../types/response';
 
 export const nextJsAdapter =
 	(controller: IController) =>
 	async (request: NextRequest, params?: HTTPParams) => {
-		const result = await controller.handle(
-			await createHTTPRequest(request, params)
-		);
+		let result: IResponse;
 
-		if (result.redirect) {
+		try {
+			result = await controller.handle(
+				await createHTTPRequest(request, params)
+			);
+		} catch (error) {
+			if (error instanceof HttpError) {
+				result = {
+					statusCode: error.statusCode,
+					status: 'fail',
+					message: error.message,
+				};
+			}
+
+			result = {
+				statusCode: 500,
+				status: 'error',
+				message: 'Internal server error',
+			};
+		}
+
+		if (result.status !== 'error' && result.redirect) {
 			return NextResponse.redirect(result.redirect);
 		}
 
-		if (result.status === 204) {
+		if (result.statusCode === 204) {
 			return new Response(null, { status: 204 });
 		}
 
-		return NextResponse.json(result, { status: result.status });
+		return NextResponse.json(result, { status: result.statusCode });
 	};

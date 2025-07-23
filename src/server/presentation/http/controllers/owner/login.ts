@@ -4,7 +4,7 @@ import type { IResponse } from '../../types/response';
 import type { IController } from '../controller';
 
 import { OwnerUseCaseErrors } from '@/server/app/errors/use-cases/owner';
-import { serverError } from '../../helper/server-error';
+import { HttpError } from '../../helper/http-error';
 
 export class OwnerLoginController implements IController {
 	constructor(private readonly _ownerLoginUseCase: IOwnerLoginUseCase) {}
@@ -31,22 +31,18 @@ export class OwnerLoginController implements IController {
 			});
 
 			return {
-				status: 200,
-				data: {
-					message: 'Authentication successful',
-				},
+				statusCode: 200,
+				status: 'success',
+				message: 'Authentication successful',
 			};
 		} catch (error: any) {
 			console.error(error);
 
 			if (error instanceof OwnerUseCaseErrors.InvalidCredentials) {
-				return {
-					status: 400,
-					error: error.message,
-				};
+				throw HttpError.unauthorized(error.message);
 			}
 
-			return serverError();
+			throw HttpError.internalServerError();
 		}
 	}
 }

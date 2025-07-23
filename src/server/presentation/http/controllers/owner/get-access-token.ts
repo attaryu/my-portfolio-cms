@@ -5,7 +5,7 @@ import type { HTTPRequest } from '../../helper/create-http-request';
 import type { IResponse } from '../../types/response';
 import type { IController } from '../controller';
 
-import { serverError } from '../../helper/server-error';
+import { HttpError } from '../../helper/http-error';
 
 export class OwnerGetAccessTokenController implements IController {
 	constructor(
@@ -18,8 +18,9 @@ export class OwnerGetAccessTokenController implements IController {
 
 			if (!refreshToken) {
 				return {
-					status: 401,
-					error: 'No refresh token provided',
+					statusCode: 401,
+					status: 'fail',
+					message: 'No refresh token provided',
 				};
 			}
 
@@ -35,23 +36,19 @@ export class OwnerGetAccessTokenController implements IController {
 			});
 
 			return {
-				status: 200,
+				statusCode: 200,
+				status: 'success',
 				message: 'Access token retrieved successfully',
 			};
 		} catch (error) {
-			console.error(error);
-
 			if (
 				error instanceof OwnerUseCaseErrors.DifferentRefreshToken ||
 				error instanceof TokenManagerErrors.InvalidToken
 			) {
-				return {
-					status: 401,
-					error: error.message,
-				};
+				throw HttpError.unauthorized(error.message);
 			}
 
-			return serverError();
+			throw HttpError.internalServerError();
 		}
 	}
 }
