@@ -1,5 +1,6 @@
 import { Email } from '../value-objects/email';
 import { Password } from '../value-objects/password';
+import { RefreshToken } from '../value-objects/refresh-token';
 
 export interface IOwner {
 	id: string;
@@ -19,7 +20,7 @@ export class OwnerEntity {
 		public _password: Password,
 		public _address: string,
 		public _coverUrl: string,
-		public _refreshToken: string | null,
+		public _refreshToken: RefreshToken,
 		public _createdAt: Date | null,
 		public _updatedAt: Date | null
 	) {}
@@ -33,7 +34,7 @@ export class OwnerEntity {
 			Password.create(owner.password),
 			owner.address,
 			owner.coverUrl,
-			null,
+			RefreshToken.create(owner.refreshToken),
 			now,
 			now
 		);
@@ -59,7 +60,7 @@ export class OwnerEntity {
 		return this._coverUrl;
 	}
 
-	get refreshToken(): string | null {
+	get refreshToken(): RefreshToken | null {
 		return this._refreshToken;
 	}
 
@@ -71,11 +72,7 @@ export class OwnerEntity {
 		return this._updatedAt;
 	}
 
-	set refreshToken(token: string | null) {
-		this._refreshToken = token;
-	}
-
-	public isRefreshTokenSame(refreshToken: string): boolean {
-		return this._refreshToken === refreshToken;
+	set refreshToken(refreshToken: RefreshToken) {
+		this._refreshToken = refreshToken;
 	}
 }

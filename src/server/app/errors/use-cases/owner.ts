@@ -13,9 +13,9 @@ export namespace OwnerUseCaseErrors {
 		}
 	}
 
-	export class DifferentRefreshToken extends ApplicationError {
+	export class InvalidToken extends ApplicationError {
 		constructor() {
-			super('Refresh token is different from the current one');
+			super('Invalid or expired token');
 		}
 	}
 }

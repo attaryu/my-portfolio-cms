@@ -19,6 +19,14 @@ export const nextJsAdapter =
 				await createHTTPRequest(request, params)
 			);
 		} catch (error) {
+			console.error(error);
+
+			result = {
+				statusCode: 500,
+				status: 'error',
+				message: 'Internal server error',
+			};
+
 			if (error instanceof HttpError) {
 				result = {
 					statusCode: error.statusCode,
@@ -26,12 +34,6 @@ export const nextJsAdapter =
 					message: error.message,
 				};
 			}
-
-			result = {
-				statusCode: 500,
-				status: 'error',
-				message: 'Internal server error',
-			};
 		}
 
 		if (result.status !== 'error' && result.redirect) {

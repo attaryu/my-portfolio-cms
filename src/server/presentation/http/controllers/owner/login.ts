@@ -42,7 +42,7 @@ export class OwnerLoginController implements IController {
 				throw HttpError.unauthorized(error.message);
 			}
 
-			throw HttpError.internalServerError();
+			throw error;
 		}
 	}
 }

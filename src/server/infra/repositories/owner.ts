@@ -5,6 +5,7 @@ import { OwnerUseCaseErrors } from '@/server/app/errors/use-cases/owner';
 import { OwnerEntity } from '@/server/domain/entities/owner';
 import { Email } from '@/server/domain/value-objects/email';
 import { Password } from '@/server/domain/value-objects/password';
+import { RefreshToken } from '@/server/domain/value-objects/refresh-token';
 
 export class OwnerRepository implements IOwnerRepository {
 	constructor(private readonly db: PrismaClient) {}
@@ -19,9 +20,14 @@ export class OwnerRepository implements IOwnerRepository {
 		return this.mapper(owner);
 	}
 
-	async getOwnerByEmail(email: string): Promise<OwnerEntity | null> {
+	async getOwnerByEmail(email: string): Promise<OwnerEntity> {
 		const owner = await this.db.owner.findUnique({ where: { email } });
-		return owner ? this.mapper(owner) : null;
+
+		if (!owner) {
+			throw new OwnerUseCaseErrors.NotFound();
+		}
+
+		return this.mapper(owner);
 	}
 
 	async updateOwner(owner: OwnerEntity): Promise<void> {
@@ -32,7 +38,7 @@ export class OwnerRepository implements IOwnerRepository {
 				password: owner.password.value,
 				address: owner.address,
 				coverUrl: owner.coverUrl,
-				refreshToken: owner.refreshToken,
+				refreshToken: owner.refreshToken?.value,
 			},
 		});
 	}
@@ -40,11 +46,11 @@ export class OwnerRepository implements IOwnerRepository {
 	private mapper(owner: Owner): OwnerEntity {
 		return new OwnerEntity(
 			owner.id,
-			new Email(owner.email),
-			new Password(owner.password),
+			Email.create(owner.email),
+			Password.create(owner.password),
 			owner.address,
 			owner.coverUrl,
-			owner.refreshToken,
+			RefreshToken.create(owner.refreshToken!),
 			owner.createdAt,
 			owner.updatedAt
 		);

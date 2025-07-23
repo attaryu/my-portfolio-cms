@@ -6,6 +6,7 @@ import type {
 
 import { sign, verify } from 'jsonwebtoken';
 
+import { OwnerUseCaseErrors } from '@/server/app/errors/use-cases/owner';
 import { TokenManagerErrors } from '../errors/services/token-manager';
 
 export class TokenManager implements ITokenManager {
@@ -51,7 +52,7 @@ export class TokenManager implements ITokenManager {
 		try {
 			return verify(token, this.key) as ITokenPayload;
 		} catch (error) {
-			throw new TokenManagerErrors.InvalidToken();
+			throw new OwnerUseCaseErrors.InvalidToken();
 		}
 	}
 }

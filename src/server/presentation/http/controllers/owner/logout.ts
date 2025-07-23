@@ -4,25 +4,21 @@ import type { IResponse } from '../../types/response';
 import type { IController } from '../controller';
 
 import { OwnerUseCaseErrors } from '@/server/app/errors/use-cases/owner';
-import { TokenManagerErrors } from '@/server/infra/errors/services/token-manager';
 
+import { RefreshTokenErrors } from '@/server/domain/errors/value-objects/refresh-token';
 import { HttpError } from '../../helper/http-error';
 
 export class OwnerLogoutController implements IController {
 	constructor(private readonly _ownerLogoutUseCase: IOwnerLogoutUseCase) {}
 
 	async handle(request: HTTPRequest): Promise<IResponse> {
-		const refreshToken = request.cookies.get('REFRESH_TOKEN')?.value;
-
-		if (!refreshToken) {
-			return {
-				statusCode: 400,
-				status: 'fail',
-				message: 'No refresh token provided',
-			};
-		}
-
 		try {
+			const refreshToken = request.cookies.get('REFRESH_TOKEN')?.value;
+
+			if (!refreshToken) {
+				throw HttpError.unauthorized('No refresh token provided');
+			}
+
 			await this._ownerLogoutUseCase.execute(refreshToken);
 
 			request.cookies.delete('REFRESH_TOKEN');
@@ -36,11 +32,10 @@ export class OwnerLogoutController implements IController {
 		} catch (error: any) {
 			console.error(error);
 
-			if (error instanceof OwnerUseCaseErrors.DifferentRefreshToken) {
-				throw HttpError.forbidden(error.message);
-			}
-
-			if (error instanceof TokenManagerErrors.InvalidToken) {
+			if (
+				error instanceof OwnerUseCaseErrors.InvalidToken ||
+				error instanceof RefreshTokenErrors.NotSame
+			) {
 				throw HttpError.unauthorized(error.message);
 			}
 
@@ -48,7 +43,7 @@ export class OwnerLogoutController implements IController {
 				throw HttpError.notFound(error.message);
 			}
 
-			throw HttpError.internalServerError();
+			throw error;
 		}
 	}
 }

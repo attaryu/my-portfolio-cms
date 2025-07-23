@@ -1,6 +1,5 @@
 import type { IOwnerGetAccessTokenUseCase } from '../get-access-token';
 
-import { OwnerUseCaseErrors } from '@/server/app/errors/use-cases/owner';
 import { IOwnerRepository } from '@/server/app/repositories/owner';
 import {
 	ITokenManager,
@@ -17,9 +16,7 @@ export class OwnerGetAccessTokenUseCase implements IOwnerGetAccessTokenUseCase {
 		const tokenPayload = this._tokenManager.verifyToken(refreshToken);
 		const owner = await this._ownerRepository.getOwnerById(tokenPayload.id);
 
-		if (!owner.isRefreshTokenSame(refreshToken)) {
-			throw new OwnerUseCaseErrors.DifferentRefreshToken();
-		}
+		owner.refreshToken?.isSameAs(refreshToken);
 
 		const { accessToken } = this._tokenManager.generateToken({ id: owner.id! });
 
