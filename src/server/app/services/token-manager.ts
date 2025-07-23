@@ -13,6 +13,6 @@ export interface ITokenResult {
 }
 
 export interface ITokenManager {
-	generateToken(data: ITokenPayload): ITokenResult;
-	verifyToken(token: string): ITokenPayload;
+	generateToken(data: ITokenPayload): Promise<ITokenResult>;
+	verifyToken(token: string): Promise<ITokenPayload>;
 }

@@ -23,7 +23,9 @@ export class OwnerLoginUseCase implements IOwnerLoginUseCase {
 
 			await owner.password.isSame(password, this._hashing);
 
-			const tokenResult = this._tokenManager.generateToken({ id: owner.id! });
+			const tokenResult = await this._tokenManager.generateToken({
+				id: owner.id!,
+			});
 
 			owner.refreshToken = RefreshToken.create(tokenResult.refreshToken.value);
 			await this._ownerRepository.updateOwner(owner);

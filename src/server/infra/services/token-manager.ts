@@ -4,7 +4,7 @@ import type {
 	ITokenResult,
 } from '@/server/app/services/token-manager';
 
-import { sign, verify } from 'jsonwebtoken';
+import { jwtVerify, SignJWT } from 'jose';
 
 import { OwnerUseCaseErrors } from '@/server/app/errors/use-cases/owner';
 import { TokenManagerErrors } from '../errors/services/token-manager';
@@ -16,21 +16,27 @@ export class TokenManager implements ITokenManager {
 	private readonly _days = 24 * this._hours;
 	private readonly key = process.env.JWT_SECRET;
 
-	public generateToken(data: ITokenPayload): ITokenResult {
+	public async generateToken(data: ITokenPayload): Promise<ITokenResult> {
 		if (!this.key) {
 			throw new TokenManagerErrors.SecretNotDefined();
 		}
 
+		const key = new TextEncoder().encode(this.key);
+
 		const accessTokenDuration = this._minutes * 15; // 15 minutes
 		const refreshTokenDuration = this._days * 3; // 3 days
 
-		const accessToken = sign(data, this.key, {
-			expiresIn: accessTokenDuration,
-		});
+		const accessToken = await new SignJWT({ ...data })
+			.setProtectedHeader({ alg: 'HS256' })
+			.setIssuedAt()
+			.setExpirationTime('+15m')
+			.sign(key);
 
-		const refreshToken = sign(data, this.key, {
-			expiresIn: refreshTokenDuration,
-		});
+		const refreshToken = await new SignJWT({ ...data })
+			.setProtectedHeader({ alg: 'HS256' })
+			.setIssuedAt()
+			.setExpirationTime('+3d')
+			.sign(key);
 
 		return {
 			accessToken: {
@@ -44,14 +50,17 @@ export class TokenManager implements ITokenManager {
 		};
 	}
 
-	public verifyToken(token: string): ITokenPayload {
+	async verifyToken(token: string): Promise<ITokenPayload> {
 		if (!this.key) {
 			throw new TokenManagerErrors.SecretNotDefined();
 		}
 
 		try {
-			return verify(token, this.key) as ITokenPayload;
+			const key = new TextEncoder().encode(this.key);
+
+			return (await jwtVerify<ITokenPayload>(token, key)).payload;
 		} catch (error) {
+			console.error(error);
 			throw new OwnerUseCaseErrors.InvalidToken();
 		}
 	}

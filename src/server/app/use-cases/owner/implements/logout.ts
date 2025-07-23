@@ -10,7 +10,7 @@ export class OwnerLogoutUseCase implements IOwnerLogoutUseCase {
 	) {}
 
 	async execute(refreshToken: string): Promise<void> {
-		const tokenPayload = this._tokenManager.verifyToken(refreshToken);
+		const tokenPayload = await this._tokenManager.verifyToken(refreshToken);
 		const owner = await this._ownerRepository.getOwnerById(tokenPayload.id);
 
 		owner.refreshToken?.isSameAs(refreshToken);

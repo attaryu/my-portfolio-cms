@@ -13,12 +13,14 @@ export class OwnerGetAccessTokenUseCase implements IOwnerGetAccessTokenUseCase {
 	) {}
 
 	async execute(refreshToken: string): Promise<ITokenResult['accessToken']> {
-		const tokenPayload = this._tokenManager.verifyToken(refreshToken);
+		const tokenPayload = await this._tokenManager.verifyToken(refreshToken);
 		const owner = await this._ownerRepository.getOwnerById(tokenPayload.id);
 
 		owner.refreshToken?.isSameAs(refreshToken);
 
-		const { accessToken } = this._tokenManager.generateToken({ id: owner.id! });
+		const { accessToken } = await this._tokenManager.generateToken({
+			id: owner.id!,
+		});
 
 		return accessToken;
 	}
