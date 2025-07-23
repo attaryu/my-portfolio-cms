@@ -2,7 +2,6 @@ interface IErrorResponse {
 	statusCode: number;
 	status: 'error';
 	message: string;
-	error?: string;
 }
 
 interface ISuccessResponse<T = any> {
@@ -18,6 +17,7 @@ interface IFailResponse {
 	status: 'fail';
 	message: string;
 	redirect?: string;
+	error?: any;
 }
 
 export type IResponse<T = any> =

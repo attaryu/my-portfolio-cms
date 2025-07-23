@@ -5,16 +5,15 @@ import type { IController } from '../controller';
 
 import { OwnerUseCaseErrors } from '@/server/app/errors/use-cases/owner';
 import { HttpError } from '../../helper/http-error';
+import { ownerLoginPayload } from '../../validations/owner/login';
 
 export class OwnerLoginController implements IController {
 	constructor(private readonly _ownerLoginUseCase: IOwnerLoginUseCase) {}
 
 	async handle(request: HTTPRequest): Promise<IResponse> {
 		try {
-			const token = await this._ownerLoginUseCase.execute(
-				request.body.email as string,
-				request.body.password as string
-			);
+			const { email, password } = ownerLoginPayload.parse(request.body);
+			const token = await this._ownerLoginUseCase.execute(email, password);
 
 			request.cookies.set('ACCESS_TOKEN', token.accessToken.value, {
 				maxAge: token.accessToken.expiresIn,

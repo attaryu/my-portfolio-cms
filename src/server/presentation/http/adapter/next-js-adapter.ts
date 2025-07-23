@@ -4,6 +4,7 @@ import type { IController } from '@/server/presentation/http/controllers/control
 import type { HTTPParams } from '../helper/create-http-request';
 
 import { NextResponse } from 'next/server';
+import { ZodError, flattenError } from 'zod';
 
 import { createHTTPRequest } from '../helper/create-http-request';
 import { HttpError } from '../helper/http-error';
@@ -26,6 +27,15 @@ export const nextJsAdapter =
 				status: 'error',
 				message: 'Internal server error',
 			};
+
+			if (error instanceof ZodError) {
+				result = {
+					statusCode: 400,
+					status: 'fail',
+					message: 'Invalid request data',
+					error: flattenError(error).fieldErrors,
+				};
+			}
 
 			if (error instanceof HttpError) {
 				result = {
