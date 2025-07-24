@@ -1,10 +1,14 @@
-import type { MiddlewareConfig, NextRequest } from 'next/server';
+import type { NextRequest } from 'next/server';
 
 import { errors, jwtVerify } from 'jose';
 import { NextResponse } from 'next/server';
 
+const protectedRoutes = ['/api/v1/techs'];
+
 export default async function middleware(request: NextRequest) {
-	if (request.nextUrl.pathname.startsWith('/api/v1/owner/test')) {
+	if (
+		protectedRoutes.some((route) => request.nextUrl.pathname.startsWith(route))
+	) {
 		try {
 			const accessToken = request.cookies.get('ACCESS_TOKEN')?.value;
 
@@ -61,7 +65,3 @@ export default async function middleware(request: NextRequest) {
 
 	return NextResponse.next();
 }
-
-export const config: MiddlewareConfig = {
-	matcher: ['/api/v1/owner/test'],
-};
