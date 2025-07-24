@@ -294,6 +294,17 @@
           "Techs"
         ],
         "description": "Create a new technology",
+        "parameters": [
+          {
+            "in": "cookie",
+            "name": "ACCESS_TOKEN",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "example": "ACCESS_TOKEN=abc123; HttpOnly; Secure"
+          }
+        ],
         "requestBody": {
           "required": true,
           "content": {
