@@ -3,11 +3,18 @@ import type { NextRequest } from 'next/server';
 import { errors, jwtVerify } from 'jose';
 import { NextResponse } from 'next/server';
 
-const protectedRoutes = ['/api/v1/techs'];
+type HttpMethod = 'GET' | 'POST' | 'PUT' | 'DELETE';
+
+const protectedRoutes: [string, HttpMethod[]][] = [['/api/v1/techs', ['POST']]];
 
 export default async function middleware(request: NextRequest) {
 	if (
-		protectedRoutes.some((route) => request.nextUrl.pathname.startsWith(route))
+		protectedRoutes.some(([route, methods]) => {
+			return (
+				request.nextUrl.pathname.startsWith(route) &&
+				methods.includes(request.method as HttpMethod)
+			);
+		})
 	) {
 		try {
 			const accessToken = request.cookies.get('ACCESS_TOKEN')?.value;
