@@ -14,8 +14,8 @@ export namespace OwnerUseCaseErrors {
 	}
 
 	export class InvalidToken extends ApplicationError {
-		constructor() {
-			super('Invalid or expired token');
+		constructor(tokenType: string) {
+			super(`Invalid ${tokenType} token`);
 		}
 	}
 }

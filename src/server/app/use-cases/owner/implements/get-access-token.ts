@@ -1,3 +1,4 @@
+import { OwnerUseCaseErrors } from '@/server/app/errors/use-cases/owner';
 import type { IOwnerRepository } from '@/server/app/repositories/owner';
 import type {
 	IToken,
@@ -13,7 +14,16 @@ export class OwnerGetAccessTokenUseCase implements IOwnerGetAccessTokenUseCase {
 
 	async execute(refreshToken: string): Promise<IToken> {
 		const tokenPayload = await this._tokenManager.verifyToken(refreshToken);
+
+		if (!tokenPayload) {
+			throw new OwnerUseCaseErrors.InvalidToken('refresh');
+		}
+		
 		const owner = await this._ownerRepository.getOwnerById(tokenPayload.id);
+
+		if (!owner) {
+			throw new OwnerUseCaseErrors.NotFound();
+		}
 
 		owner.refreshToken?.isSameAs(refreshToken);
 

@@ -18,6 +18,10 @@ export class OwnerLoginUseCase implements IOwnerLoginUseCase {
 		try {
 			const owner = await this._ownerRepository.getOwnerByEmail(email);
 
+			if (!owner) {
+				throw new OwnerUseCaseErrors.NotFound();
+			}
+
 			await owner.password.isSame(password, this._hashing);
 
 			const refreshToken = await this._tokenManager.generateRefreshToken(
@@ -28,7 +32,7 @@ export class OwnerLoginUseCase implements IOwnerLoginUseCase {
 				owner.id!
 			);
 
-			owner.refreshToken = RefreshToken.create(refreshToken.value);
+			owner.refreshToken = refreshToken.value;
 			await this._ownerRepository.updateOwner(owner);
 
 			return {
