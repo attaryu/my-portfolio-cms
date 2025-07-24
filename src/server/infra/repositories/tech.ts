@@ -2,9 +2,9 @@ import type {
 	ITechQuery,
 	ITechRepository,
 } from '@/server/app/repositories/tech';
-import type { PrismaClient } from '../databases/prisma/generated/prisma';
+import { type PrismaClient } from '../databases/prisma/generated/prisma';
 
-import { TechEntity } from '@/server/domain/entities/tech';
+import { ITech, TechEntity } from '@/server/domain/entities/tech';
 
 export class TechRepository implements ITechRepository {
 	constructor(private readonly prisma: PrismaClient) {}
@@ -16,6 +16,34 @@ export class TechRepository implements ITechRepository {
 
 	async getRowCount(query?: ITechQuery): Promise<number> {
 		return await this.prisma.techs.count(this.queryBuilder(query));
+	}
+
+	async getTech(
+		field: Partial<Pick<ITech, 'id' | 'name' | 'logoUrl'>>
+	): Promise<TechEntity | null> {
+		const tech = await this.prisma.techs.findFirst({
+			where: {
+				...field,
+			},
+		});
+
+		return tech ? this.mapper(tech) : null;
+	}
+
+	async createTech(tech: TechEntity): Promise<TechEntity> {
+		try {
+			const createdTech = await this.prisma.techs.create({
+				data: {
+					name: tech.name,
+					logoUrl: tech.logoUrl,
+				},
+			});
+
+			return this.mapper(createdTech);
+		} catch (error) {
+			console.error('Error creating tech:', error);
+			throw error;
+		}
 	}
 
 	private queryBuilder(query?: ITechQuery) {

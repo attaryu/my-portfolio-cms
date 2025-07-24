@@ -1,4 +1,4 @@
-import type { TechEntity } from '@/server/domain/entities/tech';
+import type { ITech, TechEntity } from '@/server/domain/entities/tech';
 
 export interface ITechQuery {
 	search?: string;
@@ -11,4 +11,8 @@ export interface ITechQuery {
 export interface ITechRepository {
 	getTechs(query?: ITechQuery): Promise<TechEntity[]>;
 	getRowCount(query?: ITechQuery): Promise<number>;
+	getTech(
+		field: Partial<Pick<ITech, 'id' | 'name' | 'logoUrl'>>
+	): Promise<TechEntity | null>;
+	createTech(tech: TechEntity): Promise<TechEntity>;
 }

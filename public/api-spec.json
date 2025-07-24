@@ -262,12 +262,16 @@
                     {
                       "id": 1,
                       "name": "JavaScript",
-                      "logo_url": "https://example.com/js-logo.png"
+                      "logo_url": "https://example.com/js-logo.png",
+                      "created_at": "2023-10-01T12:00:00Z",
+                      "updated_at": "2023-10-01T12:00:00Z"
                     },
                     {
                       "id": 2,
                       "name": "React",
-                      "logo_url": "https://example.com/react-logo.png"
+                      "logo_url": "https://example.com/react-logo.png",
+                      "created_at": "2023-10-01T12:00:00Z",
+                      "updated_at": "2023-10-01T12:00:00Z"
                     }
                   ],
                   "pagination": {
@@ -282,6 +286,60 @@
           },
           "500": {
             "$ref": "#/components/responses/InternalServerError"
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "Techs"
+        ],
+        "description": "Create a new technology",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "name": {
+                    "type": "string",
+                    "example": "TypeScript"
+                  },
+                  "logo_url": {
+                    "type": "string",
+                    "format": "uri",
+                    "example": "https://example.com/ts-logo.png"
+                  }
+                },
+                "required": [
+                  "name",
+                  "logo_url"
+                ]
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Technology created successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SuccessResponse"
+                },
+                "example": {
+                  "status": "success",
+                  "message": "Technology created successfully",
+                  "data": {
+                    "id": 3,
+                    "name": "TypeScript",
+                    "logo_url": "https://example.com/ts-logo.png",
+                    "created_at": "2023-10-01T12:00:00Z",
+                    "updated_at": "2023-10-01T12:00:00Z"
+                  }
+                }
+              }
+            }
           }
         }
       }

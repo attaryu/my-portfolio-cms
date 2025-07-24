@@ -15,29 +15,27 @@ export class TechEntity {
 		public readonly _updatedAt: Date | null
 	) {}
 
-	static create(tech: ITech): TechEntity {
-		const now = new Date();
-
-		return new TechEntity(null, tech.name, tech.logoUrl, now, now);
+	static create(tech: { name: string; logoUrl: string }): TechEntity {
+		return new TechEntity(null, tech.name, tech.logoUrl, null, null);
 	}
 
 	get id(): string | null {
 		return this._id;
 	}
 
-  get name(): string {
-    return this._name;
-  }
+	get name(): string {
+		return this._name;
+	}
 
-  get logoUrl(): string {
-    return this._logoUrl;
-  }
+	get logoUrl(): string {
+		return this._logoUrl;
+	}
 
-  get createdAt(): Date | null {
-    return this._createdAt;
-  }
+	get createdAt(): Date | null {
+		return this._createdAt;
+	}
 
-  get updatedAt(): Date | null {
-    return this._updatedAt;
-  }
+	get updatedAt(): Date | null {
+		return this._updatedAt;
+	}
 }
