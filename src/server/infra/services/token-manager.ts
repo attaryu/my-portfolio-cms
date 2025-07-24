@@ -4,7 +4,7 @@ import type {
 	ITokenPayload,
 } from '@/server/app/services/token-manager';
 
-import { jwtVerify, SignJWT } from 'jose';
+import { errors, jwtVerify, SignJWT } from 'jose';
 
 import { OwnerUseCaseErrors } from '@/server/app/errors/use-cases/owner';
 import { TokenManagerErrors } from '../errors/services/token-manager';
@@ -58,7 +58,7 @@ export class TokenManager implements ITokenManager {
 		};
 	}
 
-	async verifyToken(token: string): Promise<ITokenPayload> {
+	async verifyToken(token: string): Promise<ITokenPayload | null> {
 		if (!this.key) {
 			throw new TokenManagerErrors.SecretNotDefined();
 		}
@@ -71,8 +71,11 @@ export class TokenManager implements ITokenManager {
 				)
 			).payload;
 		} catch (error) {
-			console.error(error);
-			throw new OwnerUseCaseErrors.InvalidToken();
+			if (error instanceof errors.JWSInvalid) {
+				return null;
+			}
+			
+			throw error;
 		}
 	}
 }

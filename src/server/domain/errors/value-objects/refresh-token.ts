@@ -12,4 +12,10 @@ export namespace RefreshTokenErrors {
 			super('Refresh token does not match');
 		}
 	}
+
+	export class NotFound extends DomainError {
+		constructor() {
+			super('Refresh token not found');
+		}
+	}
 }

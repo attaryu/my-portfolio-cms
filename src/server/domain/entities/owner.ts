@@ -60,7 +60,7 @@ export class OwnerEntity {
 		return this._coverUrl;
 	}
 
-	get refreshToken(): RefreshToken | null {
+	get refreshToken(): RefreshToken {
 		return this._refreshToken;
 	}
 
@@ -72,7 +72,7 @@ export class OwnerEntity {
 		return this._updatedAt;
 	}
 
-	set refreshToken(refreshToken: RefreshToken) {
-		this._refreshToken = refreshToken;
+	set refreshToken(refreshToken: string | undefined) {
+		this._refreshToken = RefreshToken.create(refreshToken);
 	}
 }

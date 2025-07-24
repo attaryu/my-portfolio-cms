@@ -11,5 +11,5 @@ export interface IToken {
 export interface ITokenManager {
 	generateAccessToken(id: string): Promise<IToken>;
 	generateRefreshToken(id: string): Promise<IToken>;
-	verifyToken(token: string): Promise<ITokenPayload>;
+	verifyToken(token: string): Promise<ITokenPayload | null>;
 }
