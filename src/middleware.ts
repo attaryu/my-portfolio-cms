@@ -1,6 +1,6 @@
 import type { MiddlewareConfig, NextRequest } from 'next/server';
 
-import { jwtVerify } from 'jose';
+import { errors, jwtVerify } from 'jose';
 import { NextResponse } from 'next/server';
 
 export default async function middleware(request: NextRequest) {
@@ -19,14 +19,25 @@ export default async function middleware(request: NextRequest) {
 				);
 			}
 
-			await jwtVerify(
+			const { payload } = await jwtVerify(
 				accessToken,
 				new TextEncoder().encode(process.env.JWT_SECRET ?? '')
 			);
-		} catch (error) {
-			console.error('JWT verification error:', error);
 
-			if (error instanceof Error && error.message.includes('invalid')) {
+			if (payload.token_type !== 'access') {
+				return NextResponse.json(
+					{
+						statusCode: 401,
+						status: 'fail',
+						message: 'Invalid access token',
+					},
+					{ status: 401 }
+				);
+			}
+		} catch (error) {
+			console.error(error);
+
+			if (error instanceof errors.JWSInvalid) {
 				return NextResponse.json(
 					{
 						statusCode: 401,

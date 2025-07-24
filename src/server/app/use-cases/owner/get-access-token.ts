@@ -1,5 +1,5 @@
-import { ITokenResult } from '../../services/token-manager';
+import { IToken } from '../../services/token-manager';
 
 export interface IOwnerGetAccessTokenUseCase {
-	execute(refreshToken: string): Promise<ITokenResult['accessToken']>;
+	execute(refreshToken: string): Promise<IToken>;
 }

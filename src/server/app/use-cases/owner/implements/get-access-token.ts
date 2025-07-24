@@ -1,10 +1,9 @@
-import type { IOwnerGetAccessTokenUseCase } from '../get-access-token';
-
-import { IOwnerRepository } from '@/server/app/repositories/owner';
-import {
+import type { IOwnerRepository } from '@/server/app/repositories/owner';
+import type {
+	IToken,
 	ITokenManager,
-	ITokenResult,
 } from '@/server/app/services/token-manager';
+import type { IOwnerGetAccessTokenUseCase } from '../get-access-token';
 
 export class OwnerGetAccessTokenUseCase implements IOwnerGetAccessTokenUseCase {
 	constructor(
@@ -12,15 +11,13 @@ export class OwnerGetAccessTokenUseCase implements IOwnerGetAccessTokenUseCase {
 		private readonly _tokenManager: ITokenManager
 	) {}
 
-	async execute(refreshToken: string): Promise<ITokenResult['accessToken']> {
+	async execute(refreshToken: string): Promise<IToken> {
 		const tokenPayload = await this._tokenManager.verifyToken(refreshToken);
 		const owner = await this._ownerRepository.getOwnerById(tokenPayload.id);
 
 		owner.refreshToken?.isSameAs(refreshToken);
 
-		const { accessToken } = await this._tokenManager.generateToken({
-			id: owner.id!,
-		});
+		const accessToken = await this._tokenManager.generateAccessToken(owner.id!);
 
 		return accessToken;
 	}

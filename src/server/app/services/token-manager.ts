@@ -1,18 +1,15 @@
 export interface ITokenPayload {
 	id: string;
+	token_type: 'access' | 'refresh';
 }
 
-interface IToken {
+export interface IToken {
 	value: string;
 	expiresIn: number;
 }
 
-export interface ITokenResult {
-	accessToken: IToken;
-	refreshToken: IToken;
-}
-
 export interface ITokenManager {
-	generateToken(data: ITokenPayload): Promise<ITokenResult>;
+	generateAccessToken(id: string): Promise<IToken>;
+	generateRefreshToken(id: string): Promise<IToken>;
 	verifyToken(token: string): Promise<ITokenPayload>;
 }

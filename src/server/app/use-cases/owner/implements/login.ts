@@ -1,10 +1,7 @@
 import type { IOwnerRepository } from '@/server/app/repositories/owner';
 import type { IHashing } from '@/server/app/services/hashing';
-import type {
-	ITokenManager,
-	ITokenResult,
-} from '@/server/app/services/token-manager';
-import type { IOwnerLoginUseCase } from '../login';
+import type { ITokenManager } from '@/server/app/services/token-manager';
+import type { IOwnerLoginUseCase, ITokenResult } from '../login';
 
 import { OwnerUseCaseErrors } from '@/server/app/errors/use-cases/owner';
 import { PasswordError } from '@/server/domain/errors/value-objects/password';
@@ -23,14 +20,27 @@ export class OwnerLoginUseCase implements IOwnerLoginUseCase {
 
 			await owner.password.isSame(password, this._hashing);
 
-			const tokenResult = await this._tokenManager.generateToken({
-				id: owner.id!,
-			});
+			const refreshToken = await this._tokenManager.generateRefreshToken(
+				owner.id!
+			);
 
-			owner.refreshToken = RefreshToken.create(tokenResult.refreshToken.value);
+			const accessToken = await this._tokenManager.generateAccessToken(
+				owner.id!
+			);
+
+			owner.refreshToken = RefreshToken.create(refreshToken.value);
 			await this._ownerRepository.updateOwner(owner);
 
-			return tokenResult;
+			return {
+				accessToken: {
+					value: accessToken.value,
+					expiresIn: accessToken.expiresIn,
+				},
+				refreshToken: {
+					value: refreshToken.value,
+					expiresIn: refreshToken.expiresIn,
+				},
+			};
 		} catch (error) {
 			if (
 				error instanceof OwnerUseCaseErrors.NotFound ||

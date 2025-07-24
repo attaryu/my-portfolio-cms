@@ -1,7 +1,7 @@
 import type {
+	IToken,
 	ITokenManager,
 	ITokenPayload,
-	ITokenResult,
 } from '@/server/app/services/token-manager';
 
 import { jwtVerify, SignJWT } from 'jose';
@@ -16,37 +16,45 @@ export class TokenManager implements ITokenManager {
 	private readonly _days = 24 * this._hours;
 	private readonly key = process.env.JWT_SECRET;
 
-	public async generateToken(data: ITokenPayload): Promise<ITokenResult> {
+	async generateAccessToken(id: string): Promise<IToken> {
+		if (!this.key) {
+			throw new TokenManagerErrors.SecretNotDefined();
+		}
+
+		const accessToken = await new SignJWT({
+			id,
+			token_type: 'access',
+		})
+			.setProtectedHeader({ alg: 'HS256' })
+			.setIssuedAt()
+			.setExpirationTime('+15m')
+			.sign(new TextEncoder().encode(this.key));
+
+		return {
+			value: accessToken,
+			expiresIn: this._minutes * 15,
+		};
+	}
+
+	async generateRefreshToken(id: string): Promise<IToken> {
 		if (!this.key) {
 			throw new TokenManagerErrors.SecretNotDefined();
 		}
 
 		const key = new TextEncoder().encode(this.key);
 
-		const accessTokenDuration = this._minutes * 15; // 15 minutes
-		const refreshTokenDuration = this._days * 3; // 3 days
-
-		const accessToken = await new SignJWT({ ...data })
-			.setProtectedHeader({ alg: 'HS256' })
-			.setIssuedAt()
-			.setExpirationTime('+15m')
-			.sign(key);
-
-		const refreshToken = await new SignJWT({ ...data })
+		const refreshToken = await new SignJWT({
+			id,
+			token_type: 'refresh',
+		})
 			.setProtectedHeader({ alg: 'HS256' })
 			.setIssuedAt()
 			.setExpirationTime('+3d')
-			.sign(key);
+			.sign(new TextEncoder().encode(this.key));
 
 		return {
-			accessToken: {
-				value: accessToken,
-				expiresIn: accessTokenDuration,
-			},
-			refreshToken: {
-				value: refreshToken,
-				expiresIn: refreshTokenDuration,
-			},
+			value: refreshToken,
+			expiresIn: this._days * 3,
 		};
 	}
 
@@ -56,9 +64,12 @@ export class TokenManager implements ITokenManager {
 		}
 
 		try {
-			const key = new TextEncoder().encode(this.key);
-
-			return (await jwtVerify<ITokenPayload>(token, key)).payload;
+			return (
+				await jwtVerify<ITokenPayload>(
+					token,
+					new TextEncoder().encode(this.key)
+				)
+			).payload;
 		} catch (error) {
 			console.error(error);
 			throw new OwnerUseCaseErrors.InvalidToken();
