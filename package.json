@@ -9,7 +9,8 @@
     "lint": "next lint",
     "db:migrate": "prisma migrate dev --name",
     "db:seed": "prisma db seed",
-    "db:push": "prisma db push"
+    "db:push": "prisma db push",
+    "db:reset": "prisma migrate reset"
   },
   "prisma": {
     "schema": "src/server/infra/databases/prisma/schema.prisma",

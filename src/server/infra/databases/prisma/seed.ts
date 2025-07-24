@@ -18,6 +18,25 @@ async function main() {
 	});
 
 	console.log('Owner created:', owner);
+
+	const techs = await prisma.techs.createMany({
+		data: [
+			{
+				name: 'JavaScript',
+				logoUrl: 'https://static.cdnlogo.com/logos/j/44/javascript.svg',
+			},
+			{
+				name: 'TypeScript',
+				logoUrl: 'https://static.cdnlogo.com/logos/t/96/typescript.svg',
+			},
+			{
+				name: 'Next.js',
+				logoUrl: 'https://static.cdnlogo.com/logos/n/80/next-js.svg',
+			},
+		],
+	});
+
+	console.log('Technologies created:', techs);
 }
 
 main()

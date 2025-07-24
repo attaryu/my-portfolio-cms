@@ -26,3 +26,13 @@ model Owner {
 
   @@map("owners")
 }
+
+model Techs {
+  id        String   @id @default(uuid())
+  name      String   @unique
+  logoUrl   String   @unique @map("logo_url")
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  @@map("techs")
+}

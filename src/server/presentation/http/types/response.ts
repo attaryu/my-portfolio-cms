@@ -10,6 +10,12 @@ interface ISuccessResponse<T = any> {
 	message: string;
 	data?: T;
 	redirect?: string;
+	pagination?: {
+		page: number;
+		limit: number;
+		total: number;
+		pages: number;
+	};
 }
 
 interface IFailResponse {

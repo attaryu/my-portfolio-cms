@@ -18,6 +18,7 @@ export async function createHTTPRequest(
 		params: await params,
 		cookies: await cookies(),
 		body: {} as any,
+		url: request.nextUrl,
 	};
 
 	if (

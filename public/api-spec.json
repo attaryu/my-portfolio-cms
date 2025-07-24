@@ -194,6 +194,51 @@
           }
         }
       }
+    },
+    "/techs": {
+      "get": {
+        "tags": [
+          "Techs"
+        ],
+        "description": "Retrieve a list of technologies",
+        "responses": {
+          "200": {
+            "description": "List of technologies retrieved successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SuccessResponse"
+                },
+                "example": {
+                  "status": "success",
+                  "message": "Technologies retrieved successfully",
+                  "data": [
+                    {
+                      "id": 1,
+                      "name": "JavaScript",
+                      "logo_url": "https://example.com/js-logo.png"
+                    },
+                    {
+                      "id": 2,
+                      "name": "React",
+                      "logo_url": "https://example.com/react-logo.png"
+                    }
+                  ],
+                  "pagination": {
+                    "total": 2,
+                    "page": 1,
+                    "limit": 10,
+                    "pages": 1
+                  }
+                }
+              }
+            }
+          },
+          "500": {
+            "$ref": "#/components/responses/InternalServerError"
+          }
+        }
+      }
     }
   },
   "components": {
@@ -209,13 +254,15 @@
         "properties": {
           "status": {
             "type": "string",
-            "default": "success"
+            "default": "success",
+            "description": "HTTP status code"
           },
           "message": {
             "type": "string"
           },
           "data": {
             "additionalProperties": true,
+            "description": "Response data, can be an object or an array of objects",
             "oneOf": [
               {
                 "type": "object"
@@ -227,6 +274,28 @@
                 }
               }
             ]
+          },
+          "pagination": {
+            "type": "object",
+            "description": "Pagination information",
+            "properties": {
+              "total": {
+                "type": "integer",
+                "description": "Total number of items available"
+              },
+              "page": {
+                "type": "integer",
+                "description": "Current page number"
+              },
+              "limit": {
+                "type": "integer",
+                "description": "Number of items per page"
+              },
+              "pages": {
+                "type": "integer",
+                "description": "Total number of pages"
+              }
+            }
           }
         }
       },
