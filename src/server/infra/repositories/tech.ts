@@ -26,8 +26,7 @@ export class TechRepository implements ITechRepository {
 				name: { contains: query?.search },
 			},
 			orderBy: {
-				[query?.orderBy?.field ?? 'updatedAt']:
-					query?.orderBy?.direction ?? 'desc',
+				[query?.orderBy ?? 'updatedAt']: query?.sort ?? 'desc',
 			},
 		};
 	}

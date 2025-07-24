@@ -4,10 +4,8 @@ export interface ITechQuery {
 	search?: string;
 	skip?: number;
 	limit?: number;
-	orderBy?: {
-		field: string;
-		direction: 'asc' | 'desc';
-	};
+	orderBy?: string;
+	sort?: 'asc' | 'desc';
 }
 
 export interface ITechRepository {

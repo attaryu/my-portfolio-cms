@@ -6,20 +6,26 @@ export const techQueryParameter = z
 		search: z.string().optional().nullable(),
 		page: z.number().min(1).optional().nullable(),
 		limit: z.number().min(1).max(50).optional().nullable(),
-		orderByField: z.string().optional().nullable(),
-		orderByDirection: z.enum(['asc', 'desc']).optional().nullable(),
+		order: z
+			.enum(
+				// always check the latest field names in the database
+				['name', 'createdAt', 'updatedAt']
+			)
+			.optional()
+			.nullable(),
+		sort: z.enum(['asc', 'desc']).optional().nullable(),
 	})
 	.refine(
-		({ orderByDirection, orderByField }) => {
-			if (!orderByField && !orderByDirection) {
+		({ sort, order }) => {
+			if (!order && !sort) {
 				return true;
 			}
 
-			return orderByField && orderByDirection;
+			return order && sort;
 		},
 		{
-			error: 'Order by field and direction must be provided together',
-			path: ['orderByField', 'orderByDirection'],
+			error: 'Order and sort must be provided together',
+			path: ['order', 'sort'],
 		}
 	)
 	.transform<IFilterTechs>((data) => ({
@@ -27,7 +33,7 @@ export const techQueryParameter = z
 		page: data.page ?? undefined,
 		limit: data.limit ?? undefined,
 		orderBy:
-			data.orderByField && data.orderByDirection
-				? { field: data.orderByField, direction: data.orderByDirection }
+			data.order && data.sort
+				? { field: data.order, direction: data.sort }
 				: undefined,
 	}));

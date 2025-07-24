@@ -5,10 +5,8 @@ export interface IFilterTechs {
 	page?: number;
 	limit?: number;
 	search?: string;
-	orderBy?: {
-		field: string;
-		direction: 'asc' | 'desc';
-	};
+	order?: string;
+	sort?: 'asc' | 'desc';
 }
 
 export interface IGetAllTechsUseCase {

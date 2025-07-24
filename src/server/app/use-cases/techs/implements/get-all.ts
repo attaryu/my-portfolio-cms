@@ -9,10 +9,9 @@ export class GetAllTechsUseCase implements IGetAllTechsUseCase {
 	constructor(private readonly techRepository: ITechRepository) {}
 
 	async execute(filters?: IFilterTechs): Promise<IPagination<ITechOut>> {
-		const total = await this.techRepository.getRowCount({
-			search: filters?.search,
-		});
+		const search = filters?.search?.trim().toLowerCase();
 
+		const total = await this.techRepository.getRowCount({ search });
 		const pages = Math.ceil(total / (filters?.limit ?? 10));
 
 		if (filters?.page && filters.page > pages) {
@@ -20,11 +19,13 @@ export class GetAllTechsUseCase implements IGetAllTechsUseCase {
 		}
 
 		const techs = await this.techRepository.getTechs({
+			search,
 			skip: filters?.page
 				? (filters.page - 1) * (filters.limit ?? 10)
 				: undefined,
 			limit: filters?.limit ?? 10,
-			orderBy: filters?.orderBy,
+			orderBy: filters?.order,
+			sort: filters?.sort,
 		});
 
 		return {

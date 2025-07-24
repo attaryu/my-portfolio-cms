@@ -27,8 +27,8 @@ export class GetAllTechsController implements IController {
 				search: request.url.searchParams.get('search'),
 				page: page ? parseInt(page, 10) : undefined,
 				limit: limit ? parseInt(limit, 10) : undefined,
-				orderByField: request.url.searchParams.get('orderByField'),
-				orderByDirection: request.url.searchParams.get('orderByDirection'),
+				order: request.url.searchParams.get('order'),
+				sort: request.url.searchParams.get('sort'),
 			});
 
 			const result = await this.getAllTechsUseCase.execute(queryParameter);
