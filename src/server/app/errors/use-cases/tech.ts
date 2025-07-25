@@ -18,4 +18,10 @@ export namespace TechUseCaseErrors {
 			super(`Tech with logo URL already exists`);
 		}
 	}
+
+	export class NotFound extends ApplicationError {
+		constructor() {
+			super(`Tech not found`);
+		}
+	}
 }
