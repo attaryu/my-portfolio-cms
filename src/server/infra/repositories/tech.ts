@@ -3,7 +3,7 @@ import type {
 	ITechRepository,
 } from '@/server/app/repositories/tech';
 import type { ITech } from '@/server/domain/entities/tech';
-import type { PrismaClient, Techs } from '../databases/prisma/generated/prisma';
+import type { PrismaClient, Techs } from '../databases/prisma/generated';
 
 import { TechEntity } from '@/server/domain/entities/tech';
 

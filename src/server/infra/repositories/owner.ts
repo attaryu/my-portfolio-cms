@@ -1,5 +1,5 @@
 import type { IOwnerRepository } from '@/server/app/repositories/owner';
-import type { Owner, PrismaClient } from '../databases/prisma/generated/prisma';
+import type { Owner, PrismaClient } from '../databases/prisma/generated';
 
 import { OwnerEntity } from '@/server/domain/entities/owner';
 import { Email } from '@/server/domain/value-objects/email';
