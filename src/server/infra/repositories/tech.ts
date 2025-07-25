@@ -79,6 +79,14 @@ export class TechRepository implements ITechRepository {
 		return this.mapper(updatedTech);
 	}
 
+	async deleteMany(ids: string[]): Promise<void> {
+		await this.prisma.techs.deleteMany({
+			where: {
+				id: { in: ids },
+			},
+		});
+	}
+
 	private queryBuilder(query?: ITechQuery) {
 		return {
 			skip: query?.skip,

@@ -20,4 +20,5 @@ export interface ITechRepository {
 	): Promise<TechEntity[] | null>;
 	createTech(tech: TechEntity): Promise<TechEntity>;
 	updateTech(tech: TechEntity): Promise<TechEntity>;
+	deleteMany(ids: string[]): Promise<void>;
 }

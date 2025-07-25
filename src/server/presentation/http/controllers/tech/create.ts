@@ -5,7 +5,7 @@ import type { IController } from '../controller';
 
 import { TechUseCaseErrors } from '@/server/app/errors/use-cases/tech';
 import { HttpError } from '../../helper/http-error';
-import { techPayloadSchema } from '../../validations/tech/create';
+import { techPayloadSchema } from '../../validations/tech/payload';
 
 export class CreateTechController implements IController {
 	constructor(private readonly createTechUseCase: ICreateTechUseCase) {}

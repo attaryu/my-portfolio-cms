@@ -347,6 +347,56 @@
             }
           }
         }
+      },
+      "delete": {
+        "tags": [
+          "Techs"
+        ],
+        "description": "Delete a technology",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/AccessTokenParameter"
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "id": {
+                    "type": "array",
+                    "items": {
+                      "type": "string",
+                      "format": "uuid",
+                      "example": "550e8400-e29b-41d4-a716-446655440000"
+                    }
+                  }
+                },
+                "required": [
+                  "id"
+                ]
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Technology deleted successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SuccessResponse"
+                },
+                "example": {
+                  "status": "success",
+                  "message": "Technology deleted successfully"
+                }
+              }
+            }
+          }
+        }
       }
     },
     "/techs/{techId}": {

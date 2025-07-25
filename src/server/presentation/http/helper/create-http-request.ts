@@ -24,7 +24,8 @@ export async function createHTTPRequest(
 	if (
 		request.method === 'POST' ||
 		request.method === 'PUT' ||
-		request.method === 'PATCH'
+		request.method === 'PATCH' ||
+		request.method === 'DELETE'
 	) {
 		const body = await request.json().catch(() => ({}));
 		processedRequest.body = body;
