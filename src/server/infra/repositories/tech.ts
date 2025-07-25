@@ -2,9 +2,10 @@ import type {
 	ITechQuery,
 	ITechRepository,
 } from '@/server/app/repositories/tech';
-import { type PrismaClient } from '../databases/prisma/generated/prisma';
+import type { ITech } from '@/server/domain/entities/tech';
+import type { PrismaClient, Techs } from '../databases/prisma/generated/prisma';
 
-import { ITech, TechEntity } from '@/server/domain/entities/tech';
+import { TechEntity } from '@/server/domain/entities/tech';
 
 export class TechRepository implements ITechRepository {
 	constructor(private readonly prisma: PrismaClient) {}
@@ -62,7 +63,6 @@ export class TechRepository implements ITechRepository {
 
 			return this.mapper(createdTech);
 		} catch (error) {
-			console.error('Error creating tech:', error);
 			throw error;
 		}
 	}
@@ -100,7 +100,7 @@ export class TechRepository implements ITechRepository {
 		};
 	}
 
-	private mapper(tech: any): TechEntity {
+	private mapper(tech: Techs): TechEntity {
 		return new TechEntity(
 			tech.id,
 			tech.name,

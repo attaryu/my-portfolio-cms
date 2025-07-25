@@ -4,7 +4,7 @@ interface IErrorResponse {
 	message: string;
 }
 
-interface ISuccessResponse<T = any> {
+interface ISuccessResponse<T> {
 	statusCode: number;
 	status: 'success';
 	message: string;
@@ -23,10 +23,10 @@ interface IFailResponse {
 	status: 'fail';
 	message: string;
 	redirect?: string;
-	error?: any;
+	error?: unknown;
 }
 
-export type IResponse<T = any> =
+export type IResponse<T = unknown> =
 	| ISuccessResponse<T>
 	| IFailResponse
 	| IErrorResponse;

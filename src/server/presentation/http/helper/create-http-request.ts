@@ -17,7 +17,7 @@ export async function createHTTPRequest(
 		headers: await headers(),
 		params: await params,
 		cookies: await cookies(),
-		body: {} as any,
+		body: {} as unknown,
 		url: request.nextUrl,
 	};
 

@@ -29,9 +29,7 @@ export class OwnerLogoutController implements IController {
 				status: 'success',
 				message: 'Logout successful',
 			};
-		} catch (error: any) {
-			console.error(error);
-
+		} catch (error) {
 			if (
 				error instanceof OwnerUseCaseErrors.InvalidToken ||
 				error instanceof RefreshTokenErrors.NotSame

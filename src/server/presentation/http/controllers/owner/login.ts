@@ -34,9 +34,7 @@ export class OwnerLoginController implements IController {
 				status: 'success',
 				message: 'Authentication successful',
 			};
-		} catch (error: any) {
-			console.error(error);
-
+		} catch (error) {
 			if (error instanceof OwnerUseCaseErrors.InvalidCredentials) {
 				throw HttpError.unauthorized(error.message);
 			}

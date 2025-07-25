@@ -4,8 +4,7 @@ import type { ITokenManager } from '@/server/app/services/token-manager';
 import type { IOwnerLoginUseCase, ITokenResult } from '../login';
 
 import { OwnerUseCaseErrors } from '@/server/app/errors/use-cases/owner';
-import { PasswordError } from '@/server/domain/errors/value-objects/password';
-import { RefreshToken } from '@/server/domain/value-objects/refresh-token';
+import { PasswordErrors } from '@/server/domain/errors/value-objects/password';
 
 export class OwnerLoginUseCase implements IOwnerLoginUseCase {
 	constructor(
@@ -48,7 +47,7 @@ export class OwnerLoginUseCase implements IOwnerLoginUseCase {
 		} catch (error) {
 			if (
 				error instanceof OwnerUseCaseErrors.NotFound ||
-				error instanceof PasswordError.DoesNotMatch
+				error instanceof PasswordErrors.DoesNotMatch
 			) {
 				throw new OwnerUseCaseErrors.InvalidCredentials();
 			}

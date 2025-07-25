@@ -6,7 +6,6 @@ import type {
 
 import { errors, jwtVerify, SignJWT } from 'jose';
 
-import { OwnerUseCaseErrors } from '@/server/app/errors/use-cases/owner';
 import { TokenManagerErrors } from '../errors/services/token-manager';
 
 export class TokenManager implements ITokenManager {
@@ -41,8 +40,6 @@ export class TokenManager implements ITokenManager {
 			throw new TokenManagerErrors.SecretNotDefined();
 		}
 
-		const key = new TextEncoder().encode(this.key);
-
 		const refreshToken = await new SignJWT({
 			id,
 			token_type: 'refresh',
@@ -74,7 +71,7 @@ export class TokenManager implements ITokenManager {
 			if (error instanceof errors.JWSInvalid) {
 				return null;
 			}
-			
+
 			throw error;
 		}
 	}
