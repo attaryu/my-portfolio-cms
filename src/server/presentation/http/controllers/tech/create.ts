@@ -5,14 +5,14 @@ import type { IController } from '../controller';
 
 import { TechUseCaseErrors } from '@/server/app/errors/use-cases/tech';
 import { HttpError } from '../../helper/http-error';
-import { createTechPayloadSchema } from '../../validations/tech/create';
+import { techPayloadSchema } from '../../validations/tech/create';
 
 export class CreateTechController implements IController {
 	constructor(private readonly createTechUseCase: ICreateTechUseCase) {}
 
 	async handle(request: HTTPRequest): Promise<IResponse> {
 		try {
-			const requestBody = createTechPayloadSchema.parse(request.body);
+			const requestBody = techPayloadSchema.parse(request.body);
 			const tech = await this.createTechUseCase.execute(requestBody);
 
 			return {

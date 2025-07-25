@@ -30,6 +30,27 @@ export class TechRepository implements ITechRepository {
 		return tech ? this.mapper(tech) : null;
 	}
 
+	async getDuplicateTech(
+		techId: string,
+		field: Partial<Pick<ITech, 'name' | 'logoUrl'>>
+	): Promise<TechEntity[] | null> {
+		const techs = await this.prisma.techs.findMany({
+			where: {
+				NOT: { id: techId },
+				OR: [
+					{
+						name: field.name,
+					},
+					{
+						logoUrl: field.logoUrl,
+					},
+				],
+			},
+		});
+
+		return techs.length > 0 ? techs.map((tech) => this.mapper(tech)) : null;
+	}
+
 	async createTech(tech: TechEntity): Promise<TechEntity> {
 		try {
 			const createdTech = await this.prisma.techs.create({
@@ -44,6 +65,18 @@ export class TechRepository implements ITechRepository {
 			console.error('Error creating tech:', error);
 			throw error;
 		}
+	}
+
+	async updateTech(tech: TechEntity): Promise<TechEntity> {
+		const updatedTech = await this.prisma.techs.update({
+			where: { id: tech.id! },
+			data: {
+				name: tech.name,
+				logoUrl: tech.logoUrl,
+			},
+		});
+
+		return this.mapper(updatedTech);
 	}
 
 	private queryBuilder(query?: ITechQuery) {

@@ -7,15 +7,9 @@ export namespace TechUseCaseErrors {
 		}
 	}
 
-	export class TechNameAlreadyExists extends ApplicationError {
-		constructor() {
-			super(`Tech with name already exists`);
-		}
-	}
-
-	export class TechLogoUrlAlreadyExists extends ApplicationError {
-		constructor() {
-			super(`Tech with logo URL already exists`);
+	export class UniqueField extends ApplicationError {
+		constructor(field: string) {
+			super(`Tech ${field} already exists`);
 		}
 	}
 

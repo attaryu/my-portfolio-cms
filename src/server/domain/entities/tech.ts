@@ -38,4 +38,12 @@ export class TechEntity {
 	get updatedAt(): Date | null {
 		return this._updatedAt;
 	}
+
+	set name(name: string) {
+		this._name = name;
+	}
+
+	set logoUrl(logoUrl: string) {
+		this._logoUrl = logoUrl;
+	}
 }
