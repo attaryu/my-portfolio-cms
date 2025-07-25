@@ -10,20 +10,19 @@ export class CreateTechUseCase implements ICreateTechUseCase {
 	constructor(private readonly techRepository: ITechRepository) {}
 
 	async execute(data: ITechCreate): Promise<ITechOut> {
-		const existingTechName = await this.techRepository.getTech({
+		const existingTechs = await this.techRepository.getDuplicateTech({
 			name: data.name,
-		});
-
-		if (existingTechName) {
-			throw new TechUseCaseErrors.UniqueField();
-		}
-
-		const existingTechLogoUrl = await this.techRepository.getTech({
 			logoUrl: data.logo_url,
 		});
 
-		if (existingTechLogoUrl) {
-			throw new TechUseCaseErrors.TechLogoUrlAlreadyExists();
+		if (existingTechs) {
+			if (existingTechs.some((tech) => tech.name === data.name)) {
+				throw new TechUseCaseErrors.UniqueField('name');
+			}
+
+			if (existingTechs.some((tech) => tech.logoUrl === data.logo_url)) {
+				throw new TechUseCaseErrors.UniqueField('logo_url');
+			}
 		}
 
 		const newTech = TechEntity.create({

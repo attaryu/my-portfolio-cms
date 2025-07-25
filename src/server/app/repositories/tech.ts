@@ -15,8 +15,8 @@ export interface ITechRepository {
 		field: Partial<Pick<ITech, 'id' | 'name' | 'logoUrl'>>
 	): Promise<TechEntity | null>;
 	getDuplicateTech(
-		techId: string,
-		field: Partial<Pick<ITech, 'name' | 'logoUrl'>>
+		field: Partial<Pick<ITech, 'name' | 'logoUrl'>>,
+		techId?: string
 	): Promise<TechEntity[] | null>;
 	createTech(tech: TechEntity): Promise<TechEntity>;
 	updateTech(tech: TechEntity): Promise<TechEntity>;

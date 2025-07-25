@@ -10,8 +10,8 @@ export class UpdateTechUseCase implements IUpdateTechUseCase {
 
 	async execute(techId: string, data: ITechCreate): Promise<ITechOut> {
 		const existingTechName = await this.techRepository.getDuplicateTech(
-			techId,
-			{ name: data.name, logoUrl: data.logo_url }
+			{ name: data.name, logoUrl: data.logo_url },
+			techId
 		);
 
 		if (existingTechName) {

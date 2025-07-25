@@ -31,8 +31,8 @@ export class TechRepository implements ITechRepository {
 	}
 
 	async getDuplicateTech(
-		techId: string,
-		field: Partial<Pick<ITech, 'name' | 'logoUrl'>>
+		field: Partial<Pick<ITech, 'name' | 'logoUrl'>>,
+		techId?: string
 	): Promise<TechEntity[] | null> {
 		const techs = await this.prisma.techs.findMany({
 			where: {
