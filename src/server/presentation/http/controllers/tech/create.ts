@@ -22,10 +22,7 @@ export class CreateTechController implements IController {
 				message: 'Tech created successfully',
 			};
 		} catch (error) {
-			if (
-				error instanceof TechUseCaseErrors.TechLogoUrlAlreadyExists ||
-				error instanceof TechUseCaseErrors.TechNameAlreadyExists
-			) {
+			if (error instanceof TechUseCaseErrors.UniqueField) {
 				throw HttpError.badRequest(error.message);
 			}
 

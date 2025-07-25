@@ -13,6 +13,7 @@ import { UpdateTechController } from '@/server/presentation/http/controllers/tec
 
 import { DeleteTechUseCase } from '@/server/app/use-cases/techs/implements/delete';
 import { DeleteTechController } from '@/server/presentation/http/controllers/tech/delete';
+import { createCheckOwnerAccessTokenMiddleware } from '@/server/presentation/http/middlewares/composer';
 
 export async function GET(request: NextRequest, params: HTTPParams) {
 	const useCase = new GetTechUseCase(new TechRepository(prisma));
@@ -22,17 +23,15 @@ export async function GET(request: NextRequest, params: HTTPParams) {
 export async function PUT(request: NextRequest, params: HTTPParams) {
 	const useCase = new UpdateTechUseCase(new TechRepository(prisma));
 
-	return await nextJsAdapter(new UpdateTechController(useCase))(
-		request,
-		params
-	);
+	return await nextJsAdapter(new UpdateTechController(useCase), [
+		createCheckOwnerAccessTokenMiddleware(),
+	])(request, params);
 }
 
 export async function DELETE(request: NextRequest, params: HTTPParams) {
 	const useCase = new DeleteTechUseCase(new TechRepository(prisma));
 
-	return await nextJsAdapter(new DeleteTechController(useCase))(
-		request,
-		params
-	);
+	return await nextJsAdapter(new DeleteTechController(useCase), [
+		createCheckOwnerAccessTokenMiddleware(),
+	])(request, params);
 }

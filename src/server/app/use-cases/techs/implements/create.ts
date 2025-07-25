@@ -15,7 +15,7 @@ export class CreateTechUseCase implements ICreateTechUseCase {
 		});
 
 		if (existingTechName) {
-			throw new TechUseCaseErrors.TechNameAlreadyExists();
+			throw new TechUseCaseErrors.UniqueField();
 		}
 
 		const existingTechLogoUrl = await this.techRepository.getTech({
