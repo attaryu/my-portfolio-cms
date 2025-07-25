@@ -34,7 +34,7 @@ export class GetAllTechsController implements IController {
 			const result = await this.getAllTechsUseCase.execute(queryParameter);
 
 			return {
-				statusCode: 200,
+				status_code: 200,
 				status: 'success',
 				message: 'Techs retrieved successfully',
 				data: { techs: result.data },

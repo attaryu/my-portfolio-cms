@@ -9,7 +9,7 @@ export const techQueryParameter = z
 		order: z
 			.enum(
 				// always check the latest field names in the database
-				['name', 'createdAt', 'updatedAt']
+				['name', 'created_at', 'updated_at']
 			)
 			.optional()
 			.nullable(),

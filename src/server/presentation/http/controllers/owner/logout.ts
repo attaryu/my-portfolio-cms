@@ -9,7 +9,7 @@ import { RefreshTokenErrors } from '@/server/domain/errors/value-objects/refresh
 import { HttpError } from '../../helper/http-error';
 
 export class OwnerLogoutController implements IController {
-	constructor(private readonly _ownerLogoutUseCase: IOwnerLogoutUseCase) {}
+	constructor(private readonly ownerLogoutUseCase: IOwnerLogoutUseCase) {}
 
 	async handle(request: HTTPRequest): Promise<IResponse> {
 		try {
@@ -19,13 +19,13 @@ export class OwnerLogoutController implements IController {
 				throw HttpError.unauthorized('No refresh token provided');
 			}
 
-			await this._ownerLogoutUseCase.execute(refreshToken);
+			await this.ownerLogoutUseCase.execute(refreshToken);
 
 			request.cookies.delete('REFRESH_TOKEN');
 			request.cookies.delete('ACCESS_TOKEN');
 
 			return {
-				statusCode: 200,
+				status_code: 200,
 				status: 'success',
 				message: 'Logout successful',
 			};

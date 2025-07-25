@@ -20,7 +20,7 @@ export class DeleteTechController implements IController {
 			await this.deleteTechUseCase.execute(techId);
 
 			return {
-				statusCode: 200,
+				status_code: 200,
 				message: 'Tech deleted successfully',
 				status: 'success',
 			};

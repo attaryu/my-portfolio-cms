@@ -25,14 +25,14 @@ export class OwnerGetAccessTokenController implements IController {
 			);
 
 			request.cookies.set('ACCESS_TOKEN', accessToken.value, {
-				maxAge: accessToken.expiresIn,
+				maxAge: accessToken.expireIn,
 				path: '/',
 				httpOnly: true,
 				sameSite: 'lax',
 			});
 
 			return {
-				statusCode: 200,
+				status_code: 200,
 				status: 'success',
 				message: 'Access token retrieved successfully',
 			};

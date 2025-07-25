@@ -15,7 +15,7 @@ export class MultipleDeleteTechsController implements IController {
 		await this.multipleDeleteTechUseCase.execute(ids);
 
 		return {
-			statusCode: 200,
+			status_code: 200,
 			status: 'success',
 			message: 'Technologies deleted successfully',
 		};

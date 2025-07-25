@@ -17,7 +17,7 @@ export class CreateTechController implements IController {
 
 			return {
 				status: 'success',
-				statusCode: 201,
+				status_code: 201,
 				data: { tech },
 				message: 'Tech created successfully',
 			};

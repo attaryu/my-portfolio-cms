@@ -38,14 +38,14 @@ export const nextJsAdapter =
 			console.error(error);
 
 			result = {
-				statusCode: 500,
+				status_code: 500,
 				status: 'error',
 				message: 'Internal server error',
 			};
 
 			if (error instanceof ZodError) {
 				result = {
-					statusCode: 400,
+					status_code: 400,
 					status: 'fail',
 					message: 'Invalid request data',
 					error: flattenError(error).fieldErrors,
@@ -54,7 +54,7 @@ export const nextJsAdapter =
 
 			if (error instanceof HttpError) {
 				result = {
-					statusCode: error.statusCode,
+					status_code: error.statusCode,
 					status: 'fail',
 					message: error.message,
 				};
@@ -65,9 +65,9 @@ export const nextJsAdapter =
 			return NextResponse.redirect(result.redirect);
 		}
 
-		if (result.statusCode === 204) {
+		if (result.status_code === 204) {
 			return new Response(null, { status: 204 });
 		}
 
-		return NextResponse.json(result, { status: result.statusCode });
+		return NextResponse.json(result, { status: result.status_code });
 	};

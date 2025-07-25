@@ -25,7 +25,7 @@ export class UpdateTechController implements IController {
 
 			return {
 				status: 'success',
-				statusCode: 200,
+				status_code: 200,
 				message: 'Tech updated successfully',
 				data: { tech },
 			};

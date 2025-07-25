@@ -8,40 +8,40 @@ import { PasswordErrors } from '@/server/domain/errors/value-objects/password';
 
 export class OwnerLoginUseCase implements IOwnerLoginUseCase {
 	constructor(
-		private readonly _ownerRepository: IOwnerRepository,
-		private readonly _tokenManager: ITokenManager,
-		private readonly _hashing: IHashing
+		private readonly ownerRepository: IOwnerRepository,
+		private readonly tokenManager: ITokenManager,
+		private readonly hashing: IHashing
 	) {}
 
 	async execute(email: string, password: string): Promise<ITokenResult> {
 		try {
-			const owner = await this._ownerRepository.getOwnerByEmail(email);
+			const owner = await this.ownerRepository.getOwnerByEmail(email);
 
 			if (!owner) {
 				throw new OwnerUseCaseErrors.NotFound();
 			}
 
-			await owner.password.isSame(password, this._hashing);
+			await owner.password.isSame(password, this.hashing);
 
-			const refreshToken = await this._tokenManager.generateRefreshToken(
+			const refreshToken = await this.tokenManager.generateRefreshToken(
 				owner.id!
 			);
 
-			const accessToken = await this._tokenManager.generateAccessToken(
+			const accessToken = await this.tokenManager.generateAccessToken(
 				owner.id!
 			);
 
 			owner.refreshToken = refreshToken.value;
-			await this._ownerRepository.updateOwner(owner);
+			await this.ownerRepository.updateOwner(owner);
 
 			return {
 				accessToken: {
 					value: accessToken.value,
-					expiresIn: accessToken.expiresIn,
+					expireIn: accessToken.expireIn,
 				},
 				refreshToken: {
 					value: refreshToken.value,
-					expiresIn: refreshToken.expiresIn,
+					expireIn: refreshToken.expireIn,
 				},
 			};
 		} catch (error) {

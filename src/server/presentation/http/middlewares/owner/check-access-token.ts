@@ -8,7 +8,7 @@ import { HttpError } from '../../helper/http-error';
 
 export class CheckOwnerAccessTokenMiddleware implements IMiddleware {
 	constructor(
-		private readonly _CheckOwnerAccessTokenUseCase: ICheckOwnerAccessTokenUseCase
+		private readonly checkOwnerAccessTokenUseCase: ICheckOwnerAccessTokenUseCase
 	) {}
 
 	async handle(request: HTTPRequest, next: Next): Promise<IResponse> {
@@ -19,7 +19,7 @@ export class CheckOwnerAccessTokenMiddleware implements IMiddleware {
 				throw HttpError.unauthorized('Access token is missing');
 			}
 
-			const result = await this._CheckOwnerAccessTokenUseCase.execute(
+			const result = await this.checkOwnerAccessTokenUseCase.execute(
 				accessToken
 			);
 

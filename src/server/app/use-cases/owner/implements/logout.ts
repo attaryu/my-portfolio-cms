@@ -6,18 +6,18 @@ import { OwnerUseCaseErrors } from '@/server/app/errors/use-cases/owner';
 
 export class OwnerLogoutUseCase implements IOwnerLogoutUseCase {
 	constructor(
-		public readonly _ownerRepository: IOwnerRepository,
-		public readonly _tokenManager: ITokenManager
+		public readonly ownerRepository: IOwnerRepository,
+		public readonly tokenManager: ITokenManager
 	) {}
 
 	async execute(refreshToken: string): Promise<void> {
-		const tokenPayload = await this._tokenManager.verifyToken(refreshToken);
+		const tokenPayload = await this.tokenManager.verifyToken(refreshToken);
 
 		if (!tokenPayload || tokenPayload.token_type !== 'refresh') {
 			throw new OwnerUseCaseErrors.InvalidToken('refresh');
 		}
 
-		const owner = await this._ownerRepository.getOwnerById(tokenPayload.id);
+		const owner = await this.ownerRepository.getOwnerById(tokenPayload.id);
 
 		if (!owner) {
 			throw new OwnerUseCaseErrors.NotFound();
@@ -27,6 +27,6 @@ export class OwnerLogoutUseCase implements IOwnerLogoutUseCase {
 		owner.refreshToken.isSameAs(refreshToken);
 
 		owner.refreshToken = undefined;
-		await this._ownerRepository.updateOwner(owner);
+		await this.ownerRepository.updateOwner(owner);
 	}
 }

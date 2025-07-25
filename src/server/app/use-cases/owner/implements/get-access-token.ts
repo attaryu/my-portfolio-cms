@@ -8,18 +8,18 @@ import type { IOwnerGetAccessTokenUseCase } from '../get-access-token';
 
 export class OwnerGetAccessTokenUseCase implements IOwnerGetAccessTokenUseCase {
 	constructor(
-		private readonly _ownerRepository: IOwnerRepository,
-		private readonly _tokenManager: ITokenManager
+		private readonly ownerRepository: IOwnerRepository,
+		private readonly tokenManager: ITokenManager
 	) {}
 
 	async execute(refreshToken: string): Promise<IToken> {
-		const tokenPayload = await this._tokenManager.verifyToken(refreshToken);
+		const tokenPayload = await this.tokenManager.verifyToken(refreshToken);
 
 		if (!tokenPayload) {
 			throw new OwnerUseCaseErrors.InvalidToken('refresh');
 		}
 		
-		const owner = await this._ownerRepository.getOwnerById(tokenPayload.id);
+		const owner = await this.ownerRepository.getOwnerById(tokenPayload.id);
 
 		if (!owner) {
 			throw new OwnerUseCaseErrors.NotFound();
@@ -27,7 +27,7 @@ export class OwnerGetAccessTokenUseCase implements IOwnerGetAccessTokenUseCase {
 
 		owner.refreshToken?.isSameAs(refreshToken);
 
-		const accessToken = await this._tokenManager.generateAccessToken(owner.id!);
+		const accessToken = await this.tokenManager.generateAccessToken(owner.id!);
 
 		return accessToken;
 	}

@@ -31,7 +31,7 @@ export class TokenManager implements ITokenManager {
 
 		return {
 			value: accessToken,
-			expiresIn: this._minutes * 15,
+			expireIn: this._minutes * 15,
 		};
 	}
 
@@ -51,7 +51,7 @@ export class TokenManager implements ITokenManager {
 
 		return {
 			value: refreshToken,
-			expiresIn: this._days * 3,
+			expireIn: this._days * 3,
 		};
 	}
 

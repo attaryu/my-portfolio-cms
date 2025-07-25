@@ -1,11 +1,11 @@
 interface IErrorResponse {
-	statusCode: number;
+	status_code: number;
 	status: 'error';
 	message: string;
 }
 
 interface ISuccessResponse<T> {
-	statusCode: number;
+	status_code: number;
 	status: 'success';
 	message: string;
 	data?: T;
@@ -19,7 +19,7 @@ interface ISuccessResponse<T> {
 }
 
 interface IFailResponse {
-	statusCode: number;
+	status_code: number;
 	status: 'fail';
 	message: string;
 	redirect?: string;

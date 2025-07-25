@@ -8,29 +8,29 @@ import { HttpError } from '../../helper/http-error';
 import { ownerLoginPayload } from '../../validations/owner/login';
 
 export class OwnerLoginController implements IController {
-	constructor(private readonly _ownerLoginUseCase: IOwnerLoginUseCase) {}
+	constructor(private readonly ownerLoginUseCase: IOwnerLoginUseCase) {}
 
 	async handle(request: HTTPRequest): Promise<IResponse> {
 		try {
 			const { email, password } = ownerLoginPayload.parse(request.body);
-			const token = await this._ownerLoginUseCase.execute(email, password);
+			const token = await this.ownerLoginUseCase.execute(email, password);
 
 			request.cookies.set('ACCESS_TOKEN', token.accessToken.value, {
-				maxAge: token.accessToken.expiresIn,
+				maxAge: token.accessToken.expireIn,
 				path: '/',
 				httpOnly: true,
 				sameSite: 'lax',
 			});
 
 			request.cookies.set('REFRESH_TOKEN', token.refreshToken.value, {
-				maxAge: token.refreshToken.expiresIn,
+				maxAge: token.refreshToken.expireIn,
 				path: '/',
 				httpOnly: true,
 				sameSite: 'lax',
 			});
 
 			return {
-				statusCode: 200,
+				status_code: 200,
 				status: 'success',
 				message: 'Authentication successful',
 			};

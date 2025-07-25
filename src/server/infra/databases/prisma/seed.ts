@@ -10,7 +10,7 @@ async function main() {
 	const owner = await prisma.owner.create({
 		data: {
 			address: 'Jakarta, Indonesia',
-			coverUrl:
+			cover_url:
 				'https://images.unsplash.com/photo-1559366682-b24d010f6d65?q=80&w=870&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D',
 			email: 'test@mail.com',
 			password: hashedPassword,
@@ -23,15 +23,15 @@ async function main() {
 		data: [
 			{
 				name: 'JavaScript',
-				logoUrl: 'https://static.cdnlogo.com/logos/j/44/javascript.svg',
+				logo_url: 'https://static.cdnlogo.com/logos/j/44/javascript.svg',
 			},
 			{
 				name: 'TypeScript',
-				logoUrl: 'https://static.cdnlogo.com/logos/t/96/typescript.svg',
+				logo_url: 'https://static.cdnlogo.com/logos/t/96/typescript.svg',
 			},
 			{
 				name: 'Next.js',
-				logoUrl: 'https://static.cdnlogo.com/logos/n/80/next-js.svg',
+				logo_url: 'https://static.cdnlogo.com/logos/n/80/next-js.svg',
 			},
 		],
 	});

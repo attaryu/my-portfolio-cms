@@ -5,7 +5,7 @@ export interface ITokenPayload {
 
 export interface IToken {
 	value: string;
-	expiresIn: number;
+	expireIn: number;
 }
 
 export interface ITokenManager {

@@ -20,7 +20,7 @@ export class GetTechController implements IController {
 			const tech = await this.getTechUseCase.execute(techId);
 
 			return {
-				statusCode: 200,
+				status_code: 200,
 				status: 'success',
 				message: 'Tech retrieved successfully',
 				data: { tech },

@@ -15,24 +15,24 @@ datasource db {
 }
 
 model Owner {
-  id           String   @id @default(uuid())
-  email        String   @unique
-  password     String
-  address      String
-  coverUrl     String   @map("cover_url")
-  refreshToken String?  @unique @map("refresh_token")
-  createdAt    DateTime @default(now()) @map("created_at")
-  updatedAt    DateTime @updatedAt @map("updated_at")
+  id            String   @id @default(uuid())
+  email         String   @unique
+  password      String
+  address       String
+  cover_url     String
+  refresh_token String?  @unique
+  created_at    DateTime @default(now())
+  updated_at    DateTime @updatedAt
 
   @@map("owners")
 }
 
 model Techs {
-  id        String   @id @default(uuid())
-  name      String   @unique
-  logoUrl   String   @unique @map("logo_url")
-  createdAt DateTime @default(now()) @map("created_at")
-  updatedAt DateTime @updatedAt @map("updated_at")
+  id         String   @id @default(uuid())
+  name       String   @unique
+  logo_url   String   @unique
+  created_at DateTime @default(now())
+  updated_at DateTime @updatedAt
 
   @@map("techs")
 }

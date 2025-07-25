@@ -43,7 +43,7 @@ export class TechRepository implements ITechRepository {
 						name: field.name,
 					},
 					{
-						logoUrl: field.logoUrl,
+						logo_url: field.logoUrl,
 					},
 				],
 			},
@@ -57,7 +57,7 @@ export class TechRepository implements ITechRepository {
 			const createdTech = await this.prisma.techs.create({
 				data: {
 					name: tech.name,
-					logoUrl: tech.logoUrl,
+					logo_url: tech.logoUrl,
 				},
 			});
 
@@ -72,7 +72,7 @@ export class TechRepository implements ITechRepository {
 			where: { id: tech.id! },
 			data: {
 				name: tech.name,
-				logoUrl: tech.logoUrl,
+				logo_url: tech.logoUrl,
 			},
 		});
 
@@ -104,9 +104,9 @@ export class TechRepository implements ITechRepository {
 		return new TechEntity(
 			tech.id,
 			tech.name,
-			tech.logoUrl,
-			tech.createdAt,
-			tech.updatedAt
+			tech.logo_url,
+			tech.created_at,
+			tech.updated_at
 		);
 	}
 }

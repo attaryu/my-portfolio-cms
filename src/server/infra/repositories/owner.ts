@@ -26,8 +26,8 @@ export class OwnerRepository implements IOwnerRepository {
 				email: owner.email.value,
 				password: owner.password.value,
 				address: owner.address,
-				coverUrl: owner.coverUrl,
-				refreshToken: owner.refreshToken?.value,
+				cover_url: owner.coverUrl,
+				refresh_token: owner.refreshToken?.value,
 			},
 		});
 	}
@@ -38,10 +38,10 @@ export class OwnerRepository implements IOwnerRepository {
 			Email.create(owner.email),
 			Password.create(owner.password),
 			owner.address,
-			owner.coverUrl,
-			RefreshToken.create(owner.refreshToken!),
-			owner.createdAt,
-			owner.updatedAt
+			owner.cover_url,
+			RefreshToken.create(owner.refresh_token!),
+			owner.created_at,
+			owner.updated_at
 		);
 	}
 }
