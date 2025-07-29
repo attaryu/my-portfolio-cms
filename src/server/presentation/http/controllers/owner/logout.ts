@@ -22,7 +22,6 @@ export class OwnerLogoutController implements IController {
 			await this.ownerLogoutUseCase.execute(refreshToken);
 
 			request.cookies.delete('REFRESH_TOKEN');
-			request.cookies.delete('ACCESS_TOKEN');
 
 			return {
 				status_code: 200,
