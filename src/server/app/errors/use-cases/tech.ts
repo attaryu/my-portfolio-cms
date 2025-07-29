@@ -13,8 +13,8 @@ class UniqueField extends ApplicationError {
 }
 
 class NotFound extends ApplicationError {
-	constructor() {
-		super(`Tech not found`);
+	constructor(message?: string) {
+		super(message ?? 'Tech not found');
 	}
 }
 

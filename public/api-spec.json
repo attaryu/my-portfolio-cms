@@ -526,6 +526,117 @@
           }
         }
       }
+    },
+    "/projects": {
+      "post": {
+        "tags": [
+          "Projects"
+        ],
+        "description": "Create a new project",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/AccessTokenParameter"
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "title": {
+                    "type": "string",
+                    "example": "My New Project"
+                  },
+                  "short_description": {
+                    "type": "string",
+                    "example": "This is a short description of my new project."
+                  },
+                  "description": {
+                    "type": "string",
+                    "example": "This is a detailed description of my new project."
+                  },
+                  "cover_url": {
+                    "type": "string",
+                    "format": "uri",
+                    "example": "https://example.com/my-new-project-cover.jpg"
+                  },
+                  "techs": {
+                    "type": "array",
+                    "items": {
+                      "type": "string",
+                      "format": "uuid",
+                      "example": "123ke4567-e89b-12d3-a456-426614174000"
+                    }
+                  },
+                  "main_links": {
+                    "type": "array",
+                    "items": {
+                      "type": "object",
+                      "properties": {
+                        "url": {
+                          "type": "string",
+                          "format": "uri",
+                          "example": "https://example.com"
+                        },
+                        "type": {
+                          "type": "string",
+                          "enum": [
+                            "FEEDBACK",
+                            "LIVE_PRODUCTION"
+                          ],
+                          "example": "LIVE_PRODUCTION"
+                        }
+                      }
+                    }
+                  },
+                  "other_links": {
+                    "type": "array",
+                    "items": {
+                      "type": "object",
+                      "properties": {
+                        "title": {
+                          "type": "string",
+                          "example": "GitHub Repository"
+                        },
+                        "url": {
+                          "type": "string",
+                          "format": "uri",
+                          "example": "https://github.com/my-new-project"
+                        },
+                        "order": {
+                          "type": "integer",
+                          "example": 0
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Project created successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SuccessResponse"
+                },
+                "example": {
+                  "status": "success",
+                  "message": "Project created successfully",
+                  "data": {
+                    "project_id": "12345"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
     }
   },
   "components": {

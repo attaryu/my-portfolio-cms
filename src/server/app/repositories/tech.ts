@@ -5,6 +5,7 @@ export interface ITechQuery {
 	skip?: number;
 	limit?: number;
 	orderBy?: string;
+	ids?: string[];
 	sort?: 'asc' | 'desc';
 }
 

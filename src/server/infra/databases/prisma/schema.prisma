@@ -24,6 +24,8 @@ model Owner {
   created_at    DateTime @default(now())
   updated_at    DateTime @updatedAt
 
+  top_projects TopProjects[]
+
   @@map("owners")
 }
 
@@ -34,5 +36,94 @@ model Techs {
   created_at DateTime @default(now())
   updated_at DateTime @updatedAt
 
+  projects ProjectTechs[]
+
   @@map("techs")
+}
+
+model Project {
+  id                String   @id @default(uuid())
+  title             String
+  short_description String
+  description       String
+  cover_url         String
+  created_at        DateTime @default(now())
+  updated_at        DateTime @updatedAt
+
+  techs              ProjectTechs[]
+  main_link          MainLink[]
+  other_links        OtherLink[]
+  description_images DescriptionImages[]
+  top_projects       TopProjects[]
+
+  @@map("projects")
+}
+
+model ProjectTechs {
+  id         String @id @default(uuid())
+  project_id String
+  tech_id    String
+
+  project Project @relation(fields: [project_id], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  tech    Techs   @relation(fields: [tech_id], references: [id], onDelete: Cascade, onUpdate: Cascade)
+
+  @@unique([project_id, tech_id])
+  @@map("project_techs")
+}
+
+enum LinkType {
+  FEEDBACK
+  LIVE_PRODUCTION
+}
+
+model MainLink {
+  id         String   @id @default(uuid())
+  url        String
+  type       LinkType
+  project_id String
+
+  project Project @relation(fields: [project_id], references: [id], onDelete: Cascade, onUpdate: Cascade)
+
+  @@unique([project_id, type])
+  @@map("main_links")
+}
+
+model OtherLink {
+  id         String @id @default(uuid())
+  title      String
+  url        String
+  domain     String
+  order      Int
+  project_id String
+
+  project Project @relation(fields: [project_id], references: [id], onDelete: Cascade, onUpdate: Cascade)
+
+  @@unique([project_id, title])
+  @@unique([project_id, order])
+  @@unique([project_id, url])
+  @@map("other_links")
+}
+
+model DescriptionImages {
+  id         String  @id @default(uuid())
+  title      String?
+  url        String
+  project_id String
+
+  project Project @relation(fields: [project_id], references: [id])
+
+  @@unique([project_id, url])
+  @@map("description_images")
+}
+
+model TopProjects {
+  id         String @id @default(uuid())
+  order      Int
+  project_id String
+  owner_id   String
+
+  owner   Owner   @relation(fields: [owner_id], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  project Project @relation(fields: [project_id], references: [id], onDelete: Cascade, onUpdate: Cascade)
+
+  @@map("top_projects")
 }
