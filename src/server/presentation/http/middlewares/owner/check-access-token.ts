@@ -13,7 +13,9 @@ export class CheckOwnerAccessTokenMiddleware implements IMiddleware {
 
 	async handle(request: HTTPRequest, next: Next): Promise<IResponse> {
 		try {
-			const accessToken = request.cookies.get('ACCESS_TOKEN')?.value;
+			const accessToken = request.headers
+				.get('Authorization')
+				?.replace('Bearer ', '');
 
 			if (!accessToken) {
 				throw HttpError.unauthorized('Access token is missing');
