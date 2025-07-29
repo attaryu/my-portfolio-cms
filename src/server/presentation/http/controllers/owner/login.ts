@@ -15,24 +15,24 @@ export class OwnerLoginController implements IController {
 			const { email, password } = ownerLoginPayload.parse(request.body);
 			const token = await this.ownerLoginUseCase.execute(email, password);
 
-			request.cookies.set('ACCESS_TOKEN', token.accessToken.value, {
-				maxAge: token.accessToken.expireIn,
-				path: '/',
-				httpOnly: true,
-				sameSite: 'lax',
-			});
-
 			request.cookies.set('REFRESH_TOKEN', token.refreshToken.value, {
 				maxAge: token.refreshToken.expireIn,
-				path: '/',
-				httpOnly: true,
-				sameSite: 'lax',
+				...(process.env.NODE_ENV === 'production'
+					? {
+							httpOnly: true,
+							secure: true,
+							sameSite: 'strict',
+					  }
+					: undefined),
 			});
 
 			return {
 				status_code: 200,
 				status: 'success',
 				message: 'Authentication successful',
+				data: {
+					access_token: token.accessToken.value,
+				},
 			};
 		} catch (error) {
 			if (error instanceof OwnerUseCaseErrors.InvalidCredentials) {

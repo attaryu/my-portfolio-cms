@@ -9,70 +9,75 @@ import { errors, jwtVerify, SignJWT } from 'jose';
 import { TokenManagerErrors } from '../errors/services/token-manager';
 
 export class TokenManager implements ITokenManager {
-	private readonly _seconds = 1;
-	private readonly _minutes = 60 * this._seconds;
-	private readonly _hours = 60 * this._minutes;
-	private readonly _days = 24 * this._hours;
-	private readonly key = process.env.JWT_SECRET;
+	private refreshTokenKey: Uint8Array<ArrayBuffer>;
+	private accessTokenKey: Uint8Array<ArrayBuffer>;
 
-	async generateAccessToken(id: string): Promise<IToken> {
-		if (!this.key) {
+	constructor() {
+		const refreshTokenKey = process.env.REFRESH_TOKEN_KEY;
+		const accessTokenKey = process.env.ACCESS_TOKEN_KEY;
+
+		if (!refreshTokenKey || !accessTokenKey) {
 			throw new TokenManagerErrors.SecretNotDefined();
 		}
 
-		const accessToken = await new SignJWT({
-			id,
-			token_type: 'access',
-		})
-			.setProtectedHeader({ alg: 'HS256' })
-			.setIssuedAt()
-			.setExpirationTime('+15m')
-			.sign(new TextEncoder().encode(this.key));
+		const textEncoder = new TextEncoder();
 
-		return {
-			value: accessToken,
-			expireIn: this._minutes * 15,
-		};
+		this.refreshTokenKey = textEncoder.encode(refreshTokenKey);
+		this.accessTokenKey = textEncoder.encode(accessTokenKey);
+	}
+
+	async generateAccessToken(id: string): Promise<IToken> {
+		const raw = process.env.ACCESS_TOKEN_EXPIRY;
+		const now = Date.now() / 1000;
+		const expireIn = raw ? now + parseInt(raw, 10) : now + 60 * 30;
+
+		const value = await new SignJWT({ token_type: 'access', id })
+			.setProtectedHeader({ alg: 'HS256' })
+			.setExpirationTime(expireIn)
+			.sign(this.accessTokenKey);
+
+		return { value, expireIn };
 	}
 
 	async generateRefreshToken(id: string): Promise<IToken> {
-		if (!this.key) {
-			throw new TokenManagerErrors.SecretNotDefined();
-		}
+		const raw = process.env.REFRESH_TOKEN_EXPIRY;
+		const now = Date.now() / 1000;
+		const expireIn = raw ? now + parseInt(raw, 10) : now + 60 * 60 * 24 * 3;
 
-		const refreshToken = await new SignJWT({
-			id,
-			token_type: 'refresh',
-		})
+		const value = await new SignJWT({ token_type: 'refresh', id })
 			.setProtectedHeader({ alg: 'HS256' })
-			.setIssuedAt()
-			.setExpirationTime('+3d')
-			.sign(new TextEncoder().encode(this.key));
+			.setExpirationTime(expireIn)
+			.sign(this.refreshTokenKey);
 
-		return {
-			value: refreshToken,
-			expireIn: this._days * 3,
-		};
+		return { value, expireIn };
 	}
 
 	async verifyToken(token: string): Promise<ITokenPayload | null> {
-		if (!this.key) {
-			throw new TokenManagerErrors.SecretNotDefined();
-		}
-
 		try {
-			return (
-				await jwtVerify<ITokenPayload>(
-					token,
-					new TextEncoder().encode(this.key)
-				)
-			).payload;
+			return await this._verify(token, this.accessTokenKey);
 		} catch (error) {
-			if (error instanceof errors.JWSInvalid) {
+			let outerError = error;
+
+			try {
+				return await this._verify(token, this.refreshTokenKey);
+			} catch (innerError) {
+				outerError = innerError;
+			}
+
+			if (outerError instanceof errors.JWSInvalid) {
 				return null;
 			}
 
-			throw error;
+			throw outerError;
 		}
+	}
+
+	private async _verify(
+		token: string,
+		key: Uint8Array<ArrayBuffer>
+	): Promise<ITokenPayload> {
+		return await jwtVerify<ITokenPayload>(token, key).then(
+			({ payload }) => payload
+		);
 	}
 }
