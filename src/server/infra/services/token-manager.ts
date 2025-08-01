@@ -64,7 +64,10 @@ export class TokenManager implements ITokenManager {
 				outerError = innerError;
 			}
 
-			if (outerError instanceof errors.JWSInvalid) {
+			if (
+				outerError instanceof errors.JWSInvalid ||
+				outerError instanceof errors.JWTExpired
+			) {
 				return null;
 			}
 

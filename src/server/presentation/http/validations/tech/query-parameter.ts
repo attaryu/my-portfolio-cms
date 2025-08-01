@@ -15,7 +15,7 @@ export const techQueryParameter = z
 			.nullable(),
 		sort: z.enum(['asc', 'desc']).optional().nullable(),
 	})
-	.refine(
+	.refine( // Ensure that 'order' and 'sort' are provided together
 		({ sort, order }) => {
 			if (!order && !sort) {
 				return true;
