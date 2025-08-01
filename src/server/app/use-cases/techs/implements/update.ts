@@ -9,6 +9,12 @@ export class UpdateTechUseCase implements IUpdateTechUseCase {
 	constructor(private readonly techRepository: ITechRepository) {}
 
 	async execute(techId: string, data: ITechCreate): Promise<ITechOut> {
+		const tech = await this.techRepository.getTech({ id: techId });
+
+		if (!tech) {
+			throw new TechUseCaseErrors.NotFound();
+		}
+
 		const existingTechName = await this.techRepository.getDuplicateTech(
 			{ name: data.name, logoUrl: data.logo_url },
 			techId
@@ -22,12 +28,6 @@ export class UpdateTechUseCase implements IUpdateTechUseCase {
 			if (existingTechName.some((tech) => tech.logoUrl === data.logo_url)) {
 				throw new TechUseCaseErrors.UniqueField('logo_url');
 			}
-		}
-
-		const tech = await this.techRepository.getTech({ id: techId });
-
-		if (!tech) {
-			throw new TechUseCaseErrors.NotFound();
 		}
 
 		tech.name = data.name;
