@@ -18,8 +18,15 @@ class NotFound extends ApplicationError {
 	}
 }
 
+class SomeIdsNotFound extends ApplicationError {
+	constructor() {
+		super('Some tech IDs were not found');
+	}
+}
+
 export const TechUseCaseErrors = {
 	BiggerPageIndex,
 	UniqueField,
 	NotFound,
+	SomeIdsNotFound,
 };
