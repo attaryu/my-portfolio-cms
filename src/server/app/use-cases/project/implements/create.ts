@@ -1,5 +1,8 @@
 import type { ICreateProjectDTO } from '@/server/app/dtos/project/create';
-import type { IProjectOutDTO } from '@/server/app/dtos/project/out';
+import {
+	ProjectOutDTO,
+	type IProjectOutDTO,
+} from '@/server/app/dtos/project/out';
 import type { IProjectRepository } from '@/server/app/repositories/project';
 import type { ITechRepository } from '@/server/app/repositories/tech';
 import type { ICreateProjectUseCase } from '../create';
@@ -35,30 +38,6 @@ export class CreateProjectUseCase implements ICreateProjectUseCase {
 		// save project to database
 		const project = await this.projectRepository.createProject(projectEntity);
 
-		return {
-			id: project.id!,
-			title: project.title,
-			short_description: project.short_description,
-			description: project.description,
-			cover_url: project.coverUrl,
-			techs: project.techs.map((tech) => ({
-				id: tech.id!,
-				name: tech.name,
-				logo_url: tech.logoUrl,
-				created_at: tech.createdAt!.toISOString(),
-				updated_at: tech.updatedAt!.toISOString(),
-			})),
-			main_links: project.mainLinks.map((link) => ({
-				id: link.id!,
-				url: link.url,
-				type: link.type,
-			})),
-			other_links: project.otherLinks?.map((link) => ({
-				id: link.id!,
-				title: link.title,
-				url: link.url,
-				order: link.order,
-			})),
-		};
+		return ProjectOutDTO(project);
 	}
 }
