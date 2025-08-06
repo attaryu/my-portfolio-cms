@@ -1,12 +1,46 @@
 import type { IProjectRepository } from '@/server/app/repositories/project';
-import type { PrismaClient } from '../databases/prisma/generated';
+import type { $Enums, PrismaClient } from '../databases/prisma/generated';
 
 import { ProjectEntity } from '@/server/domain/entities/project';
+import { TechEntity } from '@/server/domain/entities/tech';
+import { MainLink } from '@/server/domain/value-objects/main-link';
+import { OtherLink } from '@/server/domain/value-objects/other-link';
+
+type IMapper = {
+	id: string;
+	title: string;
+	short_description: string;
+	description: string;
+	cover_url: string;
+	created_at: Date;
+	updated_at: Date;
+	techs: {
+		tech: {
+			id: string;
+			created_at: Date;
+			updated_at: Date;
+			name: string;
+			logo_url: string;
+		};
+	}[];
+	main_link: {
+		id: string;
+		url: string;
+		type: $Enums.LinkType;
+	}[];
+	other_links: {
+		id: string;
+		title: string;
+		url: string;
+		domain: string;
+		order: number;
+	}[];
+};
 
 export class ProjectRepository implements IProjectRepository {
 	constructor(private readonly prisma: PrismaClient) {}
 
-	async createProject(project: ProjectEntity): Promise<string> {
+	async createProject(project: ProjectEntity): Promise<ProjectEntity> {
 		const createdProject = await this.prisma.project.create({
 			data: {
 				id: project.id,
@@ -42,8 +76,73 @@ export class ProjectRepository implements IProjectRepository {
 					  }
 					: undefined),
 			},
+			select: {
+				id: true,
+				title: true,
+				short_description: true,
+				description: true,
+				cover_url: true,
+				created_at: true,
+				updated_at: true,
+				techs: {
+					select: {
+						tech: {
+							select: {
+								id: true,
+								name: true,
+								logo_url: true,
+								created_at: true,
+								updated_at: true,
+							},
+						},
+					},
+				},
+				main_link: {
+					select: {
+						id: true,
+						type: true,
+						url: true,
+					},
+				},
+				other_links: {
+					select: {
+						id: true,
+						title: true,
+						url: true,
+						domain: true,
+						order: true,
+					},
+				},
+			},
 		});
 
-		return createdProject.id;
+		return this.mapper(createdProject);
+	}
+
+	private mapper(project: IMapper): ProjectEntity {
+		return new ProjectEntity(
+			project.id,
+			project.title,
+			project.short_description,
+			project.description,
+			project.cover_url,
+			project.techs.map(
+				({ tech }) =>
+					new TechEntity(
+						tech.id,
+						tech.name,
+						tech.logo_url,
+						tech.created_at,
+						tech.updated_at
+					)
+			),
+			project.main_link.map(
+				(link) => new MainLink(link.id, link.url, link.type)
+			),
+			project.other_links?.map(
+				(link) =>
+					new OtherLink(link.id, link.title, link.url, link.domain, link.order)
+			)
+		);
 	}
 }

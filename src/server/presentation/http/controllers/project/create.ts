@@ -14,13 +14,13 @@ export class CreateProjectController implements IController {
 	async handle(request: HTTPRequest): Promise<IResponse> {
 		try {
 			const payload = projectPayloadSchema.parse(request.body);
-			const projectId = await this.createProjectUseCase.execute(payload);
+			const project = await this.createProjectUseCase.execute(payload);
 
 			return {
 				message: 'Project created successfully',
 				status_code: 201,
 				status: 'success',
-				data: { projectId },
+				data: { project },
 			};
 		} catch (error) {
 			if (error instanceof MainLinkErrors.InvalidType) {
