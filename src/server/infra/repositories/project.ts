@@ -38,6 +38,45 @@ type IMapper = {
 };
 
 export class ProjectRepository implements IProjectRepository {
+	private readonly detailedSelect = {
+		id: true,
+		title: true,
+		short_description: true,
+		description: true,
+		cover_url: true,
+		created_at: true,
+		updated_at: true,
+		techs: {
+			select: {
+				tech: {
+					select: {
+						id: true,
+						name: true,
+						logo_url: true,
+						created_at: true,
+						updated_at: true,
+					},
+				},
+			},
+		},
+		main_link: {
+			select: {
+				id: true,
+				type: true,
+				url: true,
+			},
+		},
+		other_links: {
+			select: {
+				id: true,
+				title: true,
+				url: true,
+				domain: true,
+				order: true,
+			},
+		},
+	};
+
 	constructor(private readonly prisma: PrismaClient) {}
 
 	async createProject(project: ProjectEntity): Promise<ProjectEntity> {
@@ -76,47 +115,19 @@ export class ProjectRepository implements IProjectRepository {
 					  }
 					: undefined),
 			},
-			select: {
-				id: true,
-				title: true,
-				short_description: true,
-				description: true,
-				cover_url: true,
-				created_at: true,
-				updated_at: true,
-				techs: {
-					select: {
-						tech: {
-							select: {
-								id: true,
-								name: true,
-								logo_url: true,
-								created_at: true,
-								updated_at: true,
-							},
-						},
-					},
-				},
-				main_link: {
-					select: {
-						id: true,
-						type: true,
-						url: true,
-					},
-				},
-				other_links: {
-					select: {
-						id: true,
-						title: true,
-						url: true,
-						domain: true,
-						order: true,
-					},
-				},
-			},
+			select: this.detailedSelect,
 		});
 
 		return this.mapper(createdProject);
+	}
+
+	async getProjectById(projectId: string): Promise<ProjectEntity | null> {
+		const project = await this.prisma.project.findUnique({
+			where: { id: projectId },
+			select: this.detailedSelect,
+		});
+
+		return project ? this.mapper(project) : null;
 	}
 
 	private mapper(project: IMapper): ProjectEntity {
