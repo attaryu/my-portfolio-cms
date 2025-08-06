@@ -1,5 +1,5 @@
-import { ITechOut } from '../../dtos/tech/out';
+import { ITechOutDTO } from '../../dtos/tech/out';
 
 export interface IGetTechUseCase {
-	execute(techId: string): Promise<ITechOut>;
+	execute(techId: string): Promise<ITechOutDTO>;
 }

@@ -1,7 +1,5 @@
-import type {
-	ITechQuery,
-	ITechRepository,
-} from '@/server/app/repositories/tech';
+import type { IQuery } from '@/server/app/dtos/query';
+import type { ITechRepository } from '@/server/app/repositories/tech';
 import type { ITech } from '@/server/domain/entities/tech';
 import type { PrismaClient, Techs } from '../databases/prisma/generated';
 
@@ -10,12 +8,12 @@ import { TechEntity } from '@/server/domain/entities/tech';
 export class TechRepository implements ITechRepository {
 	constructor(private readonly prisma: PrismaClient) {}
 
-	async getTechs(query?: ITechQuery): Promise<TechEntity[]> {
+	async getTechs(query?: IQuery): Promise<TechEntity[]> {
 		const techs = await this.prisma.techs.findMany(this.queryBuilder(query));
 		return techs.map((tech) => this.mapper(tech));
 	}
 
-	async getRowCount(query?: ITechQuery): Promise<number> {
+	async getRowCount(query?: IQuery): Promise<number> {
 		return await this.prisma.techs.count(this.queryBuilder(query));
 	}
 
@@ -87,7 +85,7 @@ export class TechRepository implements ITechRepository {
 		});
 	}
 
-	private queryBuilder(query?: ITechQuery) {
+	private queryBuilder(query?: IQuery) {
 		return {
 			skip: query?.skip,
 			take: query?.limit,

@@ -3,7 +3,7 @@ import type { HTTPRequest } from '../../helper/create-http-request';
 import type { IResponse } from '../../types/response';
 import type { IController } from '../controller';
 
-import { TechUseCaseErrors } from '@/server/app/errors/use-cases/tech';
+import { GeneralAppError } from '@/server/app/errors/app-error';
 import { HttpError } from '../../helper/http-error';
 import { techQueryParameter } from '../../validations/tech/query-parameter';
 
@@ -41,7 +41,7 @@ export class GetAllTechsController implements IController {
 				pagination: result.pagination,
 			};
 		} catch (error) {
-			if (error instanceof TechUseCaseErrors.BiggerPageIndex) {
+			if (error instanceof GeneralAppError.BiggerPageIndex) {
 				throw HttpError.badRequest(error.message);
 			}
 

@@ -2,7 +2,7 @@ import type { ICreateProjectDTO } from '@/server/app/dtos/project/create';
 import {
 	ProjectOutDTO,
 	type IProjectOutDTO,
-} from '@/server/app/dtos/project/out';
+} from '@/server/app/dtos/project/detailed-out';
 import type { IProjectRepository } from '@/server/app/repositories/project';
 import type { ITechRepository } from '@/server/app/repositories/tech';
 import type { ICreateProjectUseCase } from '../create';

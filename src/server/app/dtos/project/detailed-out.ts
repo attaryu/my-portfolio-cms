@@ -1,6 +1,7 @@
-import type { ITechOut } from '../tech/out';
+import type { ITechOutDTO } from '../tech/out';
 
 import { ProjectEntity } from '@/server/domain/entities/project';
+import { TechOutDTO } from '../tech/out';
 
 export interface IProjectOutDTO {
 	id: string;
@@ -8,7 +9,7 @@ export interface IProjectOutDTO {
 	short_description: string;
 	description: string;
 	cover_url: string;
-	techs: ITechOut[];
+	techs: ITechOutDTO[];
 	main_links: {
 		id: string;
 		url: string;
@@ -28,13 +29,7 @@ export const ProjectOutDTO = (project: ProjectEntity): IProjectOutDTO => ({
 	short_description: project.short_description,
 	description: project.description,
 	cover_url: project.coverUrl,
-	techs: project.techs.map((tech) => ({
-		id: tech.id!,
-		name: tech.name,
-		logo_url: tech.logoUrl,
-		created_at: tech.createdAt!.toISOString(),
-		updated_at: tech.updatedAt!.toISOString(),
-	})),
+	techs: project.techs.map(TechOutDTO),
 	main_links: project.mainLinks.map((link) => ({
 		id: link.id!,
 		url: link.url,

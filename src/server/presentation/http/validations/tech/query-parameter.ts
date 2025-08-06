@@ -1,4 +1,4 @@
-import { IFilterTechs } from '@/server/app/use-cases/techs/get-all';
+import { IFilterDTO } from '@/server/app/dtos/filter';
 import z from 'zod';
 
 export const techQueryParameter = z
@@ -15,7 +15,8 @@ export const techQueryParameter = z
 			.nullable(),
 		sort: z.enum(['asc', 'desc']).optional().nullable(),
 	})
-	.refine( // Ensure that 'order' and 'sort' are provided together
+	.refine(
+		// Ensure that 'order' and 'sort' are provided together
 		({ sort, order }) => {
 			if (!order && !sort) {
 				return true;
@@ -28,7 +29,7 @@ export const techQueryParameter = z
 			path: ['order', 'sort'],
 		}
 	)
-	.transform<IFilterTechs>((data) => ({
+	.transform<IFilterDTO>((data) => ({
 		search: data.search ?? undefined,
 		page: data.page ?? undefined,
 		limit: data.limit ?? undefined,

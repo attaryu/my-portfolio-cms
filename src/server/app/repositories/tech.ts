@@ -1,17 +1,9 @@
 import type { ITech, TechEntity } from '@/server/domain/entities/tech';
-
-export interface ITechQuery {
-	search?: string;
-	skip?: number;
-	limit?: number;
-	orderBy?: string;
-	ids?: string[];
-	sort?: 'asc' | 'desc';
-}
+import type { IQuery } from '../dtos/query';
 
 export interface ITechRepository {
-	getTechs(query?: ITechQuery): Promise<TechEntity[]>;
-	getRowCount(query?: ITechQuery): Promise<number>;
+	getTechs(query?: IQuery): Promise<TechEntity[]>;
+	getRowCount(query?: IQuery): Promise<number>;
 	getTech(
 		field: Partial<Pick<ITech, 'id' | 'name' | 'logoUrl'>>
 	): Promise<TechEntity | null>;
