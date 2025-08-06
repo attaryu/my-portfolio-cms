@@ -8,9 +8,13 @@ export const projectPayloadSchema = z.object({
 	description: z.string(),
 	cover_url: z.url('Cover URL must be a valid URL'),
 	techs: z
-		.array(z.string())
+		.array(z.uuid())
 		.min(1, 'At least one technology is required')
-		.max(25, 'A maximum of 25 technologies is allowed'),
+		.max(25, 'A maximum of 25 technologies is allowed')
+		.refine((techs) => new Set(techs).size === techs.length, {
+			error: 'Technology IDs must be unique',
+			path: ['techs'],
+		}),
 
 	main_links: z
 		.array(
