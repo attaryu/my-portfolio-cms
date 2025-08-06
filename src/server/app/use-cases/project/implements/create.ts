@@ -13,10 +13,15 @@ export class CreateProjectUseCase implements ICreateProjectUseCase {
 	) {}
 
 	async execute(newProject: ICreateProjectDTO): Promise<string> {
-		// check tech ids
-		const techs = await this.techRepository.getTechs({ ids: newProject.techs });
+		const reduceTechIds = newProject.techs.reduce(
+			(a, b) => (a.includes(b) ? a : [...a, b]),
+			[] as string[]
+		);
 
-		if (techs.length !== newProject.techs.length) {
+		// check tech ids
+		const techs = await this.techRepository.getTechs({ ids: reduceTechIds });
+
+		if (techs.length !== reduceTechIds.length) {
 			throw new TechUseCaseErrors.NotFound('Some techs not found');
 		}
 
