@@ -1,5 +1,5 @@
-import type { IProjectOutDTO } from '../../dtos/project/detailed-out';
+import type { IProjectDetailedOutDTO } from '../../dtos/project/detailed-out';
 
 export interface IGetProjectUseCase {
-	execute(projectId: string): Promise<IProjectOutDTO>;
+	execute(projectId: string): Promise<IProjectDetailedOutDTO>;
 }

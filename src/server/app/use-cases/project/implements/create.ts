@@ -1,7 +1,7 @@
 import type { ICreateProjectDTO } from '@/server/app/dtos/project/create';
 import {
-	ProjectOutDTO,
-	type IProjectOutDTO,
+	ProjectDetailedOutDTO,
+	type IProjectDetailedOutDTO,
 } from '@/server/app/dtos/project/detailed-out';
 import type { IProjectRepository } from '@/server/app/repositories/project';
 import type { ITechRepository } from '@/server/app/repositories/tech';
@@ -16,7 +16,7 @@ export class CreateProjectUseCase implements ICreateProjectUseCase {
 		private techRepository: ITechRepository
 	) {}
 
-	async execute(newProject: ICreateProjectDTO): Promise<IProjectOutDTO> {
+	async execute(newProject: ICreateProjectDTO): Promise<IProjectDetailedOutDTO> {
 		// check tech ids
 		const techs = await this.techRepository.getTechs({ ids: newProject.techs });
 
@@ -38,6 +38,6 @@ export class CreateProjectUseCase implements ICreateProjectUseCase {
 		// save project to database
 		const project = await this.projectRepository.createProject(projectEntity);
 
-		return ProjectOutDTO(project);
+		return ProjectDetailedOutDTO(project);
 	}
 }
