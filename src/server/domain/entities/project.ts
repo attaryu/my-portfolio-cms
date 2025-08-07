@@ -81,7 +81,7 @@ export class ProjectEntity {
 	}
 
 	get mainLinks() {
-		return this._main_links;
+		return this._main_links!;
 	}
 
 	get otherLinks() {
@@ -94,5 +94,37 @@ export class ProjectEntity {
 
 	get updatedAt() {
 		return this._updated_at;
+	}
+
+	set title(value: string) {
+		this._title = value;
+	}
+
+	set shortDescription(value: string) {
+		this._short_description = value;
+	}
+
+	set description(value: string | undefined) {
+		this._description = value;
+	}
+
+	set coverUrl(value: string) {
+		this._cover_url = value;
+	}
+
+	set techs(value: TechEntity[] | undefined) {
+		this._techs = value;
+	}
+
+	set mainLinks(value: IMainLink[]) {
+		this._main_links = value.map((link) =>
+			MainLink.create(link.url, link.type)
+		);
+	}
+
+	set otherLinks(value: IOtherLink[] | undefined) {
+		this._other_links = value?.map((link) =>
+			OtherLink.create(link.title, link.url, link.order)
+		);
 	}
 }
