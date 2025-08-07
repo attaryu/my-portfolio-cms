@@ -1,4 +1,4 @@
-import type { ITechCreate } from '@/server/app/dtos/tech/create';
+import type { ITechPayloadDTO } from '@/server/app/dtos/tech/create';
 import type { ITechOutDTO } from '@/server/app/dtos/tech/out';
 import type { ITechRepository } from '@/server/app/repositories/tech';
 import type { ICreateTechUseCase } from '../create';
@@ -10,7 +10,7 @@ import { TechEntity } from '@/server/domain/entities/tech';
 export class CreateTechUseCase implements ICreateTechUseCase {
 	constructor(private readonly techRepository: ITechRepository) {}
 
-	async execute(data: ITechCreate): Promise<ITechOutDTO> {
+	async execute(data: ITechPayloadDTO): Promise<ITechOutDTO> {
 		const existingTechs = await this.techRepository.getDuplicateTech({
 			name: data.name,
 			logoUrl: data.logo_url,

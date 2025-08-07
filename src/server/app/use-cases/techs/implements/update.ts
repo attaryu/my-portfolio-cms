@@ -1,4 +1,4 @@
-import type { ITechCreate } from '@/server/app/dtos/tech/create';
+import type { ITechPayloadDTO } from '@/server/app/dtos/tech/create';
 import type { ITechOutDTO } from '@/server/app/dtos/tech/out';
 import type { ITechRepository } from '@/server/app/repositories/tech';
 import type { IUpdateTechUseCase } from '../update';
@@ -9,7 +9,7 @@ import { TechUseCaseErrors } from '@/server/app/errors/use-cases/tech';
 export class UpdateTechUseCase implements IUpdateTechUseCase {
 	constructor(private readonly techRepository: ITechRepository) {}
 
-	async execute(techId: string, data: ITechCreate): Promise<ITechOutDTO> {
+	async execute(techId: string, data: ITechPayloadDTO): Promise<ITechOutDTO> {
 		const tech = await this.techRepository.getTech({ id: techId });
 
 		if (!tech) {
