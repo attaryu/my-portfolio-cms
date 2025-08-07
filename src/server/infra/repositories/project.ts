@@ -1,6 +1,7 @@
 import type { IProjectRepository } from '@/server/app/repositories/project';
 import type { $Enums, PrismaClient } from '../databases/prisma/generated';
 
+import { IQuery } from '@/server/app/dtos/query';
 import { ProjectEntity } from '@/server/domain/entities/project';
 import { TechEntity } from '@/server/domain/entities/tech';
 import { MainLink } from '@/server/domain/value-objects/main-link';
@@ -10,11 +11,11 @@ type IMapper = {
 	id: string;
 	title: string;
 	short_description: string;
-	description: string;
 	cover_url: string;
 	created_at: Date;
 	updated_at: Date;
-	techs: {
+	description?: string;
+	techs?: {
 		tech: {
 			id: string;
 			created_at: Date;
@@ -23,12 +24,12 @@ type IMapper = {
 			logo_url: string;
 		};
 	}[];
-	main_link: {
+	main_link?: {
 		id: string;
 		url: string;
 		type: $Enums.LinkType;
 	}[];
-	other_links: {
+	other_links?: {
 		id: string;
 		title: string;
 		url: string;
@@ -85,16 +86,16 @@ export class ProjectRepository implements IProjectRepository {
 				id: project.id,
 				title: project.title,
 				short_description: project.short_description,
-				description: project.description,
+				description: project.description!,
 				cover_url: project.coverUrl,
 				techs: {
 					createMany: {
-						data: project.techs.map(({ id }) => ({ tech_id: id! })),
+						data: project.techs!.map(({ id }) => ({ tech_id: id! })),
 					},
 				},
 				main_link: {
 					createMany: {
-						data: project.mainLinks.map((link) => ({
+						data: project.mainLinks!.map((link) => ({
 							type: link.type,
 							url: link.url,
 						})),
@@ -130,14 +131,48 @@ export class ProjectRepository implements IProjectRepository {
 		return project ? this.mapper(project) : null;
 	}
 
+	async getRowCount(query?: IQuery): Promise<number> {
+		return await this.prisma.project.count(this.queryBuilder(query));
+	}
+
+	async getProjects(query?: IQuery): Promise<ProjectEntity[]> {
+		const projects = await this.prisma.project.findMany({
+			...this.queryBuilder(query),
+			select: {
+				id: true,
+				title: true,
+				short_description: true,
+				cover_url: true,
+				created_at: true,
+				updated_at: true,
+			},
+		});
+
+		return projects.map((project) => this.mapper(project));
+	}
+
+	private queryBuilder(query?: IQuery) {
+		return {
+			skip: query?.skip,
+			take: query?.limit,
+			where: {
+				...(query?.search ? { name: { contains: query?.search } } : undefined),
+				...(query?.ids ? { id: { in: query.ids } } : undefined),
+			},
+			orderBy: {
+				[query?.orderBy ?? 'updated_at']: query?.sort ?? 'desc',
+			},
+		};
+	}
+
 	private mapper(project: IMapper): ProjectEntity {
 		return new ProjectEntity(
 			project.id,
 			project.title,
 			project.short_description,
-			project.description,
 			project.cover_url,
-			project.techs.map(
+			project.description,
+			project.techs?.map(
 				({ tech }) =>
 					new TechEntity(
 						tech.id,
@@ -147,13 +182,15 @@ export class ProjectRepository implements IProjectRepository {
 						tech.updated_at
 					)
 			),
-			project.main_link.map(
+			project.main_link?.map(
 				(link) => new MainLink(link.id, link.url, link.type)
 			),
 			project.other_links?.map(
 				(link) =>
 					new OtherLink(link.id, link.title, link.url, link.domain, link.order)
-			)
+			),
+			project.created_at,
+			project.updated_at
 		);
 	}
 }

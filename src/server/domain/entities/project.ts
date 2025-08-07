@@ -18,11 +18,13 @@ export class ProjectEntity {
 		private readonly _id: string | undefined,
 		private _title: string,
 		private _short_description: string,
-		private _description: string,
 		private _cover_url: string,
-		private _techs: TechEntity[],
-		private _main_links: MainLink[],
-		private _other_links?: OtherLink[]
+		private _description?: string,
+		private _techs?: TechEntity[],
+		private _main_links?: MainLink[],
+		private _other_links?: OtherLink[],
+		private _created_at?: Date,
+		private _updated_at?: Date
 	) {}
 
 	static create(
@@ -46,8 +48,8 @@ export class ProjectEntity {
 			undefined,
 			title,
 			short_description,
-			description,
 			cover_url,
+			description,
 			techs,
 			mainLinks,
 			otherLinks
@@ -84,5 +86,13 @@ export class ProjectEntity {
 
 	get otherLinks() {
 		return this._other_links;
+	}
+
+	get createdAt() {
+		return this._created_at;
+	}
+
+	get updatedAt() {
+		return this._updated_at;
 	}
 }
