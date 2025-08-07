@@ -1,4 +1,4 @@
-import type { ICreateProjectDTO } from '@/server/app/dtos/project/create';
+import type { IProjectPayloadDTO } from '@/server/app/dtos/project/create';
 import {
 	ProjectDetailedOutDTO,
 	type IProjectDetailedOutDTO,
@@ -16,7 +16,7 @@ export class CreateProjectUseCase implements ICreateProjectUseCase {
 		private techRepository: ITechRepository
 	) {}
 
-	async execute(newProject: ICreateProjectDTO): Promise<IProjectDetailedOutDTO> {
+	async execute(newProject: IProjectPayloadDTO): Promise<IProjectDetailedOutDTO> {
 		// check tech ids
 		const techs = await this.techRepository.getTechs({ ids: newProject.techs });
 

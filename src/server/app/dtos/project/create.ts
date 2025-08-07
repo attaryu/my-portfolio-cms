@@ -1,4 +1,4 @@
-export interface ICreateProjectDTO {
+export interface IProjectPayloadDTO {
 	title: string;
 	short_description: string;
 	description: string;
