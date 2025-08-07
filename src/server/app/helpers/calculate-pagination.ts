@@ -23,7 +23,7 @@ export function calculatePagination(
 } {
 	const totalPage = Math.ceil(totalData / limit);
 
-	if (currentPage && currentPage > totalPage) {
+	if (currentPage && totalPage && currentPage > totalPage) {
 		throw new GeneralAppError.BiggerPageIndex();
 	}
 
