@@ -8,4 +8,5 @@ export interface IProjectRepository {
 	getRowCount(query?: IQuery): Promise<number>;
 	getProjects(query?: IQuery): Promise<ProjectEntity[]>;
 	updateProject(project: ProjectEntity): Promise<ProjectEntity>;
+	deleteMany(projectIds: string[]): Promise<void>;
 }

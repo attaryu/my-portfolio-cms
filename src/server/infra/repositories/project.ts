@@ -192,6 +192,14 @@ export class ProjectRepository implements IProjectRepository {
 		return this.mapper(updatedProject);
 	}
 
+	async deleteMany(ids: string[]): Promise<void> {
+		await this.prisma.project.deleteMany({
+			where: {
+				id: { in: ids },
+			},
+		});
+	}
+
 	private queryBuilder(query?: IQuery) {
 		return {
 			skip: query?.skip,
