@@ -7,9 +7,11 @@ import { prisma } from '@/server/infra/databases/prisma/connection';
 import { ProjectRepository } from '@/server/infra/repositories/project';
 import { TechRepository } from '@/server/infra/repositories/tech';
 
+import { MultipleDeleteProjectsUseCase } from '@/server/app/use-cases/project/implements/multiple-delete';
 import { nextJsAdapter } from '@/server/presentation/http/adapter/next-js-adapter';
 import { CreateProjectController } from '@/server/presentation/http/controllers/project/create';
 import { GetAllProjectsController } from '@/server/presentation/http/controllers/project/get-all';
+import { MultipleDeleteProjectsController } from '@/server/presentation/http/controllers/project/multiple-delete';
 import { createCheckOwnerAccessTokenMiddleware } from '@/server/presentation/http/middlewares/composer';
 
 export async function POST(request: NextRequest) {
@@ -26,4 +28,14 @@ export async function POST(request: NextRequest) {
 export async function GET(request: NextRequest) {
 	const useCase = new GetAllProjectsUseCase(new ProjectRepository(prisma));
 	return await nextJsAdapter(new GetAllProjectsController(useCase))(request);
+}
+
+export async function DELETE(request: NextRequest) {
+	const userCase = new MultipleDeleteProjectsUseCase(
+		new ProjectRepository(prisma)
+	);
+
+	return await nextJsAdapter(new MultipleDeleteProjectsController(userCase), [
+		createCheckOwnerAccessTokenMiddleware(),
+	])(request);
 }

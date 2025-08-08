@@ -6,6 +6,13 @@ class NotFound extends ApplicationError {
 	}
 }
 
+class SomeIdsNotFound extends ApplicationError {
+	constructor() {
+		super('Some project IDs were not found');
+	}
+}
+
 export const ProjectUseCaseErrors = {
 	NotFound,
+	SomeIdsNotFound,
 };

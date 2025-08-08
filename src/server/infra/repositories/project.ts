@@ -196,6 +196,21 @@ export class ProjectRepository implements IProjectRepository {
 		await this.prisma.project.deleteMany({
 			where: {
 				id: { in: ids },
+				main_link: {
+					every: {
+						project_id: { in: ids },
+					},
+				},
+				other_links: {
+					every: {
+						project_id: { in: ids },
+					},
+				},
+				techs: {
+					every: {
+						project_id: { in: ids },
+					},
+				},
 			},
 		});
 	}
