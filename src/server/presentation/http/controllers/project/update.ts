@@ -6,6 +6,7 @@ import type { IController } from '../controller';
 import { ProjectUseCaseErrors } from '@/server/app/errors/use-cases/project';
 import { TechUseCaseErrors } from '@/server/app/errors/use-cases/tech';
 import { HttpError } from '../../helper/http-error';
+import { id } from '../../validations/id';
 import { projectPayloadSchema } from '../../validations/project/payload';
 
 export class UpdateProjectController implements IController {
@@ -19,9 +20,12 @@ export class UpdateProjectController implements IController {
 				throw HttpError.badRequest('Project ID is required');
 			}
 
+			id.parse(projectId);
+			const payload = projectPayloadSchema.parse(request.body);
+
 			const project = await this.updateProjectUseCase.execute(
-				request.params.projectId,
-				projectPayloadSchema.parse(request.body)
+				projectId,
+				payload
 			);
 
 			return {

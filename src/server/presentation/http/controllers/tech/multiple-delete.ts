@@ -4,9 +4,8 @@ import type { IResponse } from '../../types/response';
 import type { IController } from '../controller';
 
 import { TechUseCaseErrors } from '@/server/app/errors/use-cases/tech';
-import { multipleDeleteTechPayload } from '../../validations/tech/delete-payload';
-
 import { HttpError } from '../../helper/http-error';
+import { multipleDeleteTechPayload } from '../../validations/tech/delete-payload';
 
 export class MultipleDeleteTechsController implements IController {
 	constructor(
@@ -15,8 +14,8 @@ export class MultipleDeleteTechsController implements IController {
 
 	async handle(request: HTTPRequest): Promise<IResponse> {
 		try {
-			const { ids } = multipleDeleteTechPayload.parse(request.body);
-			await this.multipleDeleteTechUseCase.execute(ids);
+			const { techIds } = multipleDeleteTechPayload.parse(request.body);
+			await this.multipleDeleteTechUseCase.execute(techIds);
 
 			return {
 				status_code: 200,

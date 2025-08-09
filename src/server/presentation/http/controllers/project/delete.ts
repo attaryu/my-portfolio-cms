@@ -5,6 +5,7 @@ import type { IController } from '../controller';
 
 import { ProjectUseCaseErrors } from '@/server/app/errors/use-cases/project';
 import { HttpError } from '../../helper/http-error';
+import { id } from '../../validations/id';
 
 export class DeleteProjectController implements IController {
 	constructor(private readonly deleteProjectUseCase: IDeleteProjectUseCase) {}
@@ -16,6 +17,8 @@ export class DeleteProjectController implements IController {
 			if (!projectId) {
 				throw HttpError.badRequest('Project ID is required');
 			}
+
+			id.parse(projectId);
 
 			await this.deleteProjectUseCase.execute(projectId);
 

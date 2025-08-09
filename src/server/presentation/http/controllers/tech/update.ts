@@ -5,6 +5,7 @@ import type { IController } from '../controller';
 
 import { TechUseCaseErrors } from '@/server/app/errors/use-cases/tech';
 import { HttpError } from '../../helper/http-error';
+import { id } from '../../validations/id';
 import { techPayloadSchema } from '../../validations/tech/payload';
 
 export class UpdateTechController implements IController {
@@ -17,6 +18,8 @@ export class UpdateTechController implements IController {
 			if (!techId) {
 				throw HttpError.badRequest('Tech ID is required');
 			}
+
+			id.parse(techId);
 
 			const tech = await this.updateTechUseCase.execute(
 				request.params.techId,

@@ -5,15 +5,22 @@ import type { IController } from '../controller';
 
 import { ProjectUseCaseErrors } from '@/server/app/errors/use-cases/project';
 import { HttpError } from '../../helper/http-error';
+import { id } from '../../validations/id';
 
 export class GetProjectController implements IController {
 	constructor(private readonly getProjectUseCase: IGetProjectUseCase) {}
 
 	async handle(request: HTTPRequest): Promise<IResponse> {
 		try {
-			const project = await this.getProjectUseCase.execute(
-				request.params.projectId
-			);
+			const { projectId } = request.params;
+
+			if (!projectId) {
+				throw HttpError.badRequest('Project ID is required');
+			}
+
+			id.parse(projectId);
+
+			const project = await this.getProjectUseCase.execute(projectId);
 
 			return {
 				message: 'Project retrieved successfully',

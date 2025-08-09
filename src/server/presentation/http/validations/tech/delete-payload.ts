@@ -1,5 +1,7 @@
 import z from 'zod';
 
+import { createMultipleIdsSchema } from '../id';
+
 export const multipleDeleteTechPayload = z.object({
-	ids: z.array(z.uuid()).nonempty('At least one ID is required'),
+	techIds: createMultipleIdsSchema('tech'),
 });

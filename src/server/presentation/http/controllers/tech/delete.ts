@@ -5,6 +5,7 @@ import type { IController } from '../controller';
 
 import { TechUseCaseErrors } from '@/server/app/errors/use-cases/tech';
 import { HttpError } from '../../helper/http-error';
+import { id } from '../../validations/id';
 
 export class DeleteTechController implements IController {
 	constructor(private readonly deleteTechUseCase: IDeleteTechUseCase) {}
@@ -16,6 +17,8 @@ export class DeleteTechController implements IController {
 			if (!techId) {
 				throw HttpError.badRequest('Tech ID is required');
 			}
+			
+			id.parse(techId);
 
 			await this.deleteTechUseCase.execute(techId);
 
