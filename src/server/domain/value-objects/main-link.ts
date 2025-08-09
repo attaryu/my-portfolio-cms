@@ -3,14 +3,14 @@ import { MainLinkErrors } from '../errors/value-objects/main-link';
 export interface IMainLink {
 	id?: string;
 	url: string;
-	type: string;
+	type: 'FEEDBACK' | 'LIVE_PRODUCTION';
 }
 
 export class MainLink {
 	constructor(
 		private _id: string | undefined,
 		private _url: string,
-		private _type: 'FEEDBACK' | 'LIVE_PRODUCTION'
+		private _type: IMainLink['type']
 	) {}
 
 	static create(url: string, type: string): MainLink {

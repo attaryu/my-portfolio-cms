@@ -2,6 +2,7 @@ import type { ITechOutDTO } from '../tech/out';
 
 import { ProjectEntity } from '@/server/domain/entities/project';
 import { TechOutDTO } from '../tech/out';
+import { IMainLink } from '@/server/domain/value-objects/main-link';
 
 export interface IProjectDetailedOutDTO {
 	id: string;
@@ -15,7 +16,7 @@ export interface IProjectDetailedOutDTO {
 	main_links: {
 		id: string;
 		url: string;
-		type: 'FEEDBACK' | 'LIVE_PRODUCTION';
+		type: IMainLink['type'];
 	}[];
 	other_links: {
 		id: string;
@@ -39,7 +40,7 @@ export const ProjectDetailedOutDTO = (
 	main_links: project.mainLinks!.map((link) => ({
 		id: link.id!,
 		url: link.url,
-		type: link.type,
+		type: link.type as IMainLink['type'],
 	})),
 	other_links: project.otherLinks!.map((link) => ({
 		id: link.id!,
