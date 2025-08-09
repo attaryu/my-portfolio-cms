@@ -6,8 +6,6 @@ export interface IOwner {
 	id: string;
 	email: string;
 	password: string;
-	address: string;
-	coverUrl: string;
 	refreshToken?: string;
 	createdAt: string;
 	updatedAt: string;
@@ -18,8 +16,6 @@ export class OwnerEntity {
 		public readonly _id: string | null,
 		public _email: Email,
 		public _password: Password,
-		public _address: string,
-		public _coverUrl: string,
 		public _refreshToken: RefreshToken,
 		public _createdAt: Date | null,
 		public _updatedAt: Date | null
@@ -32,8 +28,6 @@ export class OwnerEntity {
 			null,
 			Email.create(owner.email),
 			Password.create(owner.password),
-			owner.address,
-			owner.coverUrl,
 			RefreshToken.create(owner.refreshToken),
 			now,
 			now
@@ -50,14 +44,6 @@ export class OwnerEntity {
 
 	get password(): Password {
 		return this._password;
-	}
-
-	get address(): string {
-		return this._address;
-	}
-
-	get coverUrl(): string {
-		return this._coverUrl;
 	}
 
 	get refreshToken(): RefreshToken {

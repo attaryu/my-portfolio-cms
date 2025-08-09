@@ -18,15 +18,28 @@ model Owner {
   id            String   @id @default(uuid())
   email         String   @unique
   password      String
-  address       String
-  cover_url     String
+  address       String?
+  cover_url     String?
+  about         String?
   refresh_token String?  @unique
   created_at    DateTime @default(now())
   updated_at    DateTime @updatedAt
 
   top_projects TopProjects[]
+  social_media SocialMedia[]
 
   @@map("owners")
+}
+
+model SocialMedia {
+  id       String @id @default(uuid())
+  name     String @unique
+  url      String @unique
+  owner_id String
+
+  owner Owner @relation(fields: [owner_id], references: [id], onDelete: Restrict, onUpdate: Cascade)
+
+  @@map("social_media")
 }
 
 model Techs {
@@ -50,11 +63,11 @@ model Project {
   created_at        DateTime @default(now())
   updated_at        DateTime @updatedAt
 
-  techs              ProjectTechs[]
-  main_link          MainLink[]
-  other_links        OtherLink[]
-  description_images DescriptionImages[]
-  top_projects       TopProjects[]
+  techs        ProjectTechs[]
+  main_link    MainLink[]
+  other_links  OtherLink[]
+  top_projects TopProjects[]
+  // description_images DescriptionImages[]
 
   @@map("projects")
 }
@@ -104,17 +117,17 @@ model OtherLink {
   @@map("other_links")
 }
 
-model DescriptionImages {
-  id         String  @id @default(uuid())
-  title      String?
-  url        String
-  project_id String
+// model DescriptionImages {
+//   id         String  @id @default(uuid())
+//   title      String?
+//   url        String
+//   project_id String
 
-  project Project @relation(fields: [project_id], references: [id])
+//   project Project @relation(fields: [project_id], references: [id])
 
-  @@unique([project_id, url])
-  @@map("description_images")
-}
+//   @@unique([project_id, url])
+//   @@map("description_images")
+// }
 
 model TopProjects {
   id         String @id @default(uuid())
