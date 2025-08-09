@@ -22,8 +22,12 @@ export class TokenManager implements ITokenManager {
 
 		const textEncoder = new TextEncoder();
 
-		this.refreshTokenKey = textEncoder.encode(refreshTokenKey);
-		this.accessTokenKey = textEncoder.encode(accessTokenKey);
+		this.refreshTokenKey = textEncoder.encode(
+			refreshTokenKey
+		) as Uint8Array<ArrayBuffer>;
+		this.accessTokenKey = textEncoder.encode(
+			accessTokenKey
+		) as Uint8Array<ArrayBuffer>;
 	}
 
 	async generateAccessToken(id: string): Promise<IToken> {
