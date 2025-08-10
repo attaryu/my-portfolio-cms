@@ -47,11 +47,8 @@ export class OwnerRepository implements IOwnerRepository {
 		});
 	}
 
-	async getOwnerPublicInfo(
-		ownerId: string
-	): Promise<IOwnerPublicInfoOutDTO | null> {
-		return await this.db.owner.findUnique({
-			where: { id: ownerId },
+	async getOwnerPublicInfo(): Promise<IOwnerPublicInfoOutDTO | null> {
+		return await this.db.owner.findFirst({
 			select: this.publicInfoQuery,
 		});
 	}

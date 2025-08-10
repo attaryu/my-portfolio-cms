@@ -10,5 +10,5 @@ export interface IOwnerRepository {
 		ownerId: string,
 		data: IOwnerPublicInfoPayloadDTO
 	): Promise<IOwnerPublicInfoOutDTO>;
-	getOwnerPublicInfo(ownerId: string): Promise<IOwnerPublicInfoOutDTO | null>;
+	getOwnerPublicInfo(): Promise<IOwnerPublicInfoOutDTO | null>;
 }

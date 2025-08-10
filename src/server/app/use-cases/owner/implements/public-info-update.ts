@@ -25,9 +25,7 @@ export class OwnerPublicInfoUpdateUseCase
 		}
 
 		const ownerId = payload.id;
-		const ownerPublicInfo = await this.ownerRepository.getOwnerPublicInfo(
-			ownerId
-		);
+		const ownerPublicInfo = await this.ownerRepository.getOwnerPublicInfo();
 
 		if (!ownerPublicInfo) {
 			throw new OwnerUseCaseErrors.NotFound();

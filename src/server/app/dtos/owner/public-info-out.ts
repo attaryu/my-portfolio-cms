@@ -1,4 +1,5 @@
 export interface IOwnerPublicInfoOutDTO {
+	id: string;
 	contact_email: string | null;
 	address: string | null;
 	cover_url: string | null;
