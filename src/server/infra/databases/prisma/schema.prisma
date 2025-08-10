@@ -18,6 +18,7 @@ model Owner {
   id            String   @id @default(uuid())
   email         String   @unique
   password      String
+  contact_email String?
   address       String?
   cover_url     String?
   about         String?
