@@ -1,6 +1,7 @@
 import type { IProjectRepository } from '@/server/app/repositories/project';
 import type { $Enums, PrismaClient } from '../databases/prisma/generated';
 
+import { IUpdateTopProjectsDTO } from '@/server/app/dtos/project/top-project-update';
 import { IQuery } from '@/server/app/dtos/query';
 import { ProjectEntity } from '@/server/domain/entities/project';
 import { TechEntity } from '@/server/domain/entities/tech';
@@ -213,6 +214,23 @@ export class ProjectRepository implements IProjectRepository {
 				},
 			},
 		});
+	}
+
+	async updateTopProjects(
+		ownerId: string,
+		topProjectEntries: IUpdateTopProjectsDTO
+	): Promise<void> {
+		const owner_id = ownerId;
+		const data = topProjectEntries.projects.map((project) => ({
+			project_id: project.id,
+			order: project.order,
+			owner_id,
+		}));
+
+		await this.prisma.$transaction([
+			this.prisma.topProjects.deleteMany({ where: { owner_id } }),
+			this.prisma.topProjects.createMany({ data }),
+		]);
 	}
 
 	private queryBuilder(query?: IQuery) {
