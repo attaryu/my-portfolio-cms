@@ -1,6 +1,7 @@
 import type { IProjectRepository } from '@/server/app/repositories/project';
 import type { $Enums, PrismaClient } from '../databases/prisma/generated';
 
+import { ITopProjectOutDTO } from '@/server/app/dtos/project/top-project-out';
 import { IUpdateTopProjectsDTO } from '@/server/app/dtos/project/top-project-update';
 import { IQuery } from '@/server/app/dtos/query';
 import { ProjectEntity } from '@/server/domain/entities/project';
@@ -231,6 +232,40 @@ export class ProjectRepository implements IProjectRepository {
 			this.prisma.topProjects.deleteMany({ where: { owner_id } }),
 			this.prisma.topProjects.createMany({ data }),
 		]);
+	}
+
+	async getTopProjects(): Promise<ITopProjectOutDTO[]> {
+		const projects = await this.prisma.topProjects.findMany({
+			select: {
+				project: {
+					select: {
+						id: true,
+						title: true,
+						short_description: true,
+						cover_url: true,
+						created_at: true,
+						main_link: true,
+						techs: {
+							select: {
+								tech: {
+									select: { name: true },
+								},
+							},
+						},
+					},
+				},
+			},
+		});
+
+		return projects.map(({ project }) => ({
+			id: project.id,
+			title: project.title,
+			short_description: project.short_description,
+			cover_url: project.cover_url,
+			created_at: project.created_at.toISOString(),
+			techs: project.techs.map(({ tech }) => tech.name),
+			main_links: project.main_link,
+		}));
 	}
 
 	private queryBuilder(query?: IQuery) {

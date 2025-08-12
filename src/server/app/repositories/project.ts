@@ -1,3 +1,4 @@
+import { ITopProjectOutDTO } from '../dtos/project/top-project-out';
 import type { IUpdateTopProjectsDTO } from '../dtos/project/top-project-update';
 import type { IQuery } from '../dtos/query';
 
@@ -14,4 +15,5 @@ export interface IProjectRepository {
 		ownerId: string,
 		topProjectEntries: IUpdateTopProjectsDTO
 	): Promise<void>;
+	getTopProjects(): Promise<ITopProjectOutDTO[]>;
 }
