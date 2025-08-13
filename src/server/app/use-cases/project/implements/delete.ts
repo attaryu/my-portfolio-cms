@@ -13,6 +13,14 @@ export class DeleteProjectUseCase implements IDeleteProjectUseCase {
 			throw new ProjectUseCaseErrors.NotFound();
 		}
 
+		const topProjectIds = await this.projectRepository
+			.getProjects()
+			.then((project) => project.map(({ id }) => id));
+
+		if (topProjectIds.some((topId) => topId === id)) {
+			throw new ProjectUseCaseErrors.TopProjectDeleteStrict('single');
+		}
+
 		await this.projectRepository.deleteMany([id]);
 	}
 }

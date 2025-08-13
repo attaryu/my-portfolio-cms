@@ -32,6 +32,10 @@ export class DeleteProjectController implements IController {
 				throw HttpError.notFound(error.message);
 			}
 
+			if (error instanceof ProjectUseCaseErrors.TopProjectDeleteStrict) {
+				throw HttpError.conflict(error.message);
+			}
+
 			throw error;
 		}
 	}

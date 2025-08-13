@@ -29,6 +29,10 @@ export class HttpError extends Error {
 		return new HttpError(404, message, errorCode ?? 'NOT_FOUND');
 	}
 
+	static conflict(message: string, errorCode?: string): HttpError {
+		return new HttpError(409, message, errorCode ?? 'CONFLICT');
+	}
+
 	static internalServerError(message?: string, errorCode?: string): HttpError {
 		return new HttpError(
 			500,

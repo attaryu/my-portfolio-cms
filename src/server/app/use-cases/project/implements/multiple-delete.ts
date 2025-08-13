@@ -9,19 +9,22 @@ export class MultipleDeleteProjectsUseCase
 	constructor(private readonly projectRepository: IProjectRepository) {}
 
 	async execute(projectIds: string[]): Promise<void> {
-		const reduceIds = projectIds.reduce(
-			(a, b) => (a.includes(b) ? a : [...a, b]),
-			[] as string[]
-		);
-
 		const projects = await this.projectRepository.getProjects({
-			ids: reduceIds,
+			ids: projectIds,
 		});
 
-		if (projects.length !== reduceIds.length) {
+		if (projects.length !== projectIds.length) {
 			throw new ProjectUseCaseErrors.SomeIdsNotFound();
 		}
 
-		await this.projectRepository.deleteMany(reduceIds);
+		const topProjectIds = await this.projectRepository
+			.getProjects()
+			.then((project) => project.map(({ id }) => id));
+
+		if (projectIds.some((id) => topProjectIds.includes(id))) {
+			throw new ProjectUseCaseErrors.TopProjectDeleteStrict('multiple');
+		}
+
+		await this.projectRepository.deleteMany(projectIds);
 	}
 }
