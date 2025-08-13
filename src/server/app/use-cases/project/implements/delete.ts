@@ -14,7 +14,7 @@ export class DeleteProjectUseCase implements IDeleteProjectUseCase {
 		}
 
 		const topProjectIds = await this.projectRepository
-			.getProjects()
+			.getTopProjects()
 			.then((project) => project.map(({ id }) => id));
 
 		if (topProjectIds.some((topId) => topId === id)) {
