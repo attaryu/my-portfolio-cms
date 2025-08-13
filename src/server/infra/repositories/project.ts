@@ -268,6 +268,10 @@ export class ProjectRepository implements IProjectRepository {
 		}));
 	}
 
+	async clearTopProjects(): Promise<void> {
+		await this.prisma.topProjects.deleteMany({});
+	}
+
 	private queryBuilder(query?: IQuery) {
 		return {
 			skip: query?.skip,

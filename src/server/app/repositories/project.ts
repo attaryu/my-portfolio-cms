@@ -16,4 +16,5 @@ export interface IProjectRepository {
 		topProjectEntries: IUpdateTopProjectsDTO
 	): Promise<void>;
 	getTopProjects(): Promise<ITopProjectOutDTO[]>;
+	clearTopProjects(): Promise<void>;
 }
