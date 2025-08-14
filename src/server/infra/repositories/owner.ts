@@ -1,8 +1,8 @@
 import type { IOwnerRepository } from '@/server/app/repositories/owner';
 import type { Owner, PrismaClient } from '../databases/prisma/generated';
+import type { IOwnerPublicInfoOutDTO } from '@/server/app/dtos/owner/public-info-out';
+import type { IOwnerPublicInfoPayloadDTO } from '@/server/app/dtos/owner/public-info-update';
 
-import { IOwnerPublicInfoOutDTO } from '@/server/app/dtos/owner/public-info-out';
-import { IOwnerPublicInfoPayloadDTO } from '@/server/app/dtos/owner/public-info-update';
 import { OwnerEntity } from '@/server/domain/entities/owner';
 import { Email } from '@/server/domain/value-objects/email';
 import { Password } from '@/server/domain/value-objects/password';
@@ -26,8 +26,8 @@ export class OwnerRepository implements IOwnerRepository {
 
 	constructor(private readonly db: PrismaClient) {}
 
-	async getOwnerById(id: string): Promise<OwnerEntity | null> {
-		const owner = await this.db.owner.findUnique({ where: { id } });
+	async getOwner(): Promise<OwnerEntity | null> {
+		const owner = await this.db.owner.findFirst();
 		return owner ? this.mapper(owner) : null;
 	}
 
@@ -42,7 +42,7 @@ export class OwnerRepository implements IOwnerRepository {
 			data: {
 				email: owner.email.value,
 				password: owner.password.value,
-				refresh_token: owner.refreshToken?.value,
+				refresh_token: owner.refreshToken?.value ?? null,
 			},
 		});
 	}

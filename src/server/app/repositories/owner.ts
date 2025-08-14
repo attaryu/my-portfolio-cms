@@ -3,7 +3,7 @@ import type { IOwnerPublicInfoOutDTO } from '../dtos/owner/public-info-out';
 import type { IOwnerPublicInfoPayloadDTO } from '../dtos/owner/public-info-update';
 
 export interface IOwnerRepository {
-	getOwnerById(id: string): Promise<OwnerEntity | null>;
+	getOwner(): Promise<OwnerEntity | null>;
 	getOwnerByEmail(email: string): Promise<OwnerEntity | null>;
 	updateOwner(owner: OwnerEntity): Promise<void>;
 	updateOwnerPublicInfo(

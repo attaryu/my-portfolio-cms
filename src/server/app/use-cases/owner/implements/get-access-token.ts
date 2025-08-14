@@ -19,7 +19,7 @@ export class OwnerGetAccessTokenUseCase implements IOwnerGetAccessTokenUseCase {
 			throw new OwnerUseCaseErrors.InvalidToken('refresh');
 		}
 		
-		const owner = await this.ownerRepository.getOwnerById(tokenPayload.id);
+		const owner = await this.ownerRepository.getOwner();
 
 		if (!owner) {
 			throw new OwnerUseCaseErrors.NotFound();
