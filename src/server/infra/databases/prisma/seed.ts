@@ -9,6 +9,8 @@ async function main() {
 		(process.env.DEFAULT_PASSWORD as string).trim()
 	);
 
+	await prisma.$queryRaw`DELETE FROM owners WHERE 1 = 1`;
+
 	const owner = await prisma.owner.create({
 		data: {
 			email: 'test@mail.com',

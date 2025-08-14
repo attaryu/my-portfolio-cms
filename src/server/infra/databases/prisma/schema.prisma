@@ -22,7 +22,7 @@ model Owner {
   address       String?
   cover_url     String?
   about         String?
-  refresh_token String?  @unique
+  refresh_token String?
   created_at    DateTime @default(now())
   updated_at    DateTime @updatedAt
 
