@@ -61,4 +61,16 @@ export class OwnerEntity {
 	set refreshToken(refreshToken: string | undefined) {
 		this._refreshToken = RefreshToken.create(refreshToken);
 	}
+
+	set email(value: string | undefined) {
+		if (value) {
+			this._email = Email.create(value);
+		}
+	}
+
+	set password(value: string | undefined) {
+		if (value) {
+			this._password = Password.create(value);
+		}
+	}
 }
