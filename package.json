@@ -17,6 +17,7 @@
     "seed": "ts-node --compiler-options {\"module\":\"CommonJS\"} src/server/infra/databases/prisma/seed.ts"
   },
   "dependencies": {
+    "@prisma/adapter-pg": "^6.14.0",
     "@prisma/client": "6.12.0",
     "bcrypt": "^6.0.0",
     "jose": "^6.0.12",
