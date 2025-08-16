@@ -121,3 +121,9 @@
 		@apply bg-background text-foreground;
 	}
 }
+
+@layer utilities {
+	.debug {
+		@apply outline outline-red-500;
+	}
+}

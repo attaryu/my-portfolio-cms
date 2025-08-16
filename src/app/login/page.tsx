@@ -4,13 +4,19 @@ import type { IFailResponse } from '@/server/presentation/http/types/response';
 
 import { useMutation } from '@tanstack/react-query';
 import { AxiosError } from 'axios';
-import { Ban, CheckCircle2 } from 'lucide-react';
+import { Ban } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import { useForm } from 'react-hook-form';
+import { toast } from 'sonner';
 
-import * as Alert from '@/components/ui/alert';
+import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 import { Button } from '@/components/ui/button';
-import * as Card from '@/components/ui/card';
+import {
+	Card,
+	CardContent,
+	CardFooter,
+	CardHeader,
+} from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import Text from '@/components/ui/text';
@@ -32,69 +38,56 @@ export default function LoginClientPage() {
 	const ownerLoginMutation = useMutation({
 		mutationFn: (data: LoginFormValues) =>
 			axiosPost<{ access_token: string }>('/owner/login', data),
+		onSuccess: (response) => {
+			router.push('/dashboard');
+			localStorage.setItem('ACCESS_TOKEN', response.data?.access_token!);
+			toast.success(response.message);
+		},
+		onError: (error) => {
+			if (error instanceof AxiosError) {
+				const data: IFailResponse = error.response!.data;
+
+				if (data.error) {
+					for (const [key, value] of Object.entries(data.error)) {
+						setError(key as keyof LoginFormValues, {
+							message: value,
+						});
+					}
+				}
+			}
+		},
 	});
 
 	const onSubmit = handleSubmit((data) => {
-		ownerLoginMutation.mutate(data, {
-			onSuccess: ({ data }) => {
-				localStorage.setItem('access_token', data?.access_token!);
-				router.push('/dashboard');
-			},
-			onError: (error) => {
-				if (error instanceof AxiosError) {
-					const data: IFailResponse = error.response!.data;
-
-					if (data.error) {
-						for (const [key, value] of Object.entries(data.error)) {
-							setError(key as keyof LoginFormValues, {
-								message: value,
-							});
-						}
-					}
-				}
-			},
-		});
+		ownerLoginMutation.mutate(data);
 	});
 
 	return (
 		<main className="grid place-items-center h-dvh">
-			<Card.Card className="w-96">
-				<Card.CardHeader>
+			<Card className="w-96">
+				<CardHeader>
 					<Text tag="h1" styling="h2" className="pb-0">
 						Login first!
 					</Text>
 
 					<Text styling="muted">It's my portfolio CMS dashboard</Text>
-				</Card.CardHeader>
+				</CardHeader>
 
-				<Card.CardContent>
+				<CardContent>
 					<form className="space-y-6" id={formId} onSubmit={onSubmit}>
 						{/* error alert */}
 						{ownerLoginMutation.isError &&
 							ownerLoginMutation.error instanceof AxiosError && (
-								<Alert.Alert variant="destructive">
+								<Alert variant="destructive">
 									<Ban />
 
-									<Alert.AlertTitle>Fail</Alert.AlertTitle>
+									<AlertTitle>Fail</AlertTitle>
 
-									<Alert.AlertDescription>
+									<AlertDescription>
 										{ownerLoginMutation.error.response?.data?.message}
-									</Alert.AlertDescription>
-								</Alert.Alert>
+									</AlertDescription>
+								</Alert>
 							)}
-
-						{/* success alert */}
-						{ownerLoginMutation.isSuccess && (
-							<Alert.Alert>
-								<CheckCircle2 />
-
-								<Alert.AlertTitle>Success</Alert.AlertTitle>
-
-								<Alert.AlertDescription>
-									{ownerLoginMutation.data.message}
-								</Alert.AlertDescription>
-							</Alert.Alert>
-						)}
 
 						<div className="space-y-2">
 							<Label htmlFor="email">Email</Label>
@@ -147,9 +140,9 @@ export default function LoginClientPage() {
 							</Text>
 						</div>
 					</form>
-				</Card.CardContent>
+				</CardContent>
 
-				<Card.CardFooter className="flex gap-2 *:grow">
+				<CardFooter className="flex gap-2 *:grow">
 					<Button
 						type="reset"
 						variant="outline"
@@ -166,8 +159,8 @@ export default function LoginClientPage() {
 					>
 						Login
 					</Button>
-				</Card.CardFooter>
-			</Card.Card>
+				</CardFooter>
+			</Card>
 		</main>
 	);
 }
