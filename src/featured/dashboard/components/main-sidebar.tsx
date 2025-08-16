@@ -31,7 +31,11 @@ type LinkGroupType = {
 };
 
 const links: (LinkGroupType | LinkType)[] = [
-	{ type: 'link', label: 'Home', href: '/dashboard', icon: House },
+	{
+		type: 'group',
+		label: 'Main Menu',
+		sub: [{ type: 'link', label: 'Home', href: '/dashboard', icon: House }],
+	},
 	{
 		type: 'group',
 		label: 'Content',
@@ -65,7 +69,7 @@ export function DashboardSidebar() {
 		<Sidebar collapsible="icon" variant="floating">
 			<DashboardSidebarHeader />
 
-			<SidebarContent className="mt-4">
+			<SidebarContent>
 				{links.map((link) =>
 					link.type === 'group' ? (
 						<SidebarGroup key={link.label}>

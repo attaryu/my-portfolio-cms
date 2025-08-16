@@ -6,7 +6,7 @@ import { cva } from 'class-variance-authority';
 interface Props extends VariantProps<typeof textCVA> {
 	tag?: 'h1' | 'h2' | 'h3' | 'h4' | 'p' | 'small';
 	className?: string;
-	children?: string;
+	children?: React.ReactNode;
 }
 
 const textCVA = cva('scroll-m-20 text-start', {
@@ -18,6 +18,7 @@ const textCVA = cva('scroll-m-20 text-start', {
 			h4: 'text-xl font-semibold tracking-tight',
 			p: 'leading-7',
 			large: 'text-lg font-semibold',
+			lead: 'text-muted-foreground text-xl',
 			small: 'text-sm leading-none font-medium',
 			muted: 'text-muted-foreground text-sm',
 		},

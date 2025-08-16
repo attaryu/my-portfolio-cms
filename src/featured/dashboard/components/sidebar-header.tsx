@@ -1,4 +1,6 @@
+import { useTheme } from 'next-themes';
 import Image from 'next/image';
+import { useEffect, useState } from 'react';
 
 import {
 	SidebarHeader,
@@ -6,17 +8,22 @@ import {
 	SidebarMenuItem,
 } from '@/components/ui/sidebar';
 import Text from '@/components/ui/text';
-import { useTheme } from 'next-themes';
 
 export function DashboardSidebarHeader() {
-	const { resolvedTheme } = useTheme();
+	const { resolvedTheme, theme } = useTheme();
+	const [logoUrl, setLogoUrl] = useState('/mattar-light.svg');
+
+	useEffect(() => {
+		setLogoUrl(`/mattar-${resolvedTheme ?? theme}.svg`);
+	}, [resolvedTheme, theme]);
 
 	return (
 		<SidebarHeader>
 			<SidebarMenu>
 				<SidebarMenuItem className="flex items-center gap-2">
 					<Image
-						src={`/mattar-${resolvedTheme}.svg`}
+						suppressHydrationWarning
+						src={logoUrl}
 						alt=""
 						width={40}
 						height={40}
