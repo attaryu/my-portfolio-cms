@@ -1,10 +1,10 @@
-interface IErrorResponse {
+export interface IErrorResponse {
 	status_code: number;
 	status: 'error';
 	message: string;
 }
 
-interface ISuccessResponse<T> {
+export interface ISuccessResponse<T> {
 	status_code: number;
 	status: 'success';
 	message: string;
@@ -18,7 +18,7 @@ interface ISuccessResponse<T> {
 	};
 }
 
-interface IFailResponse {
+export interface IFailResponse {
 	status_code: number;
 	status: 'fail';
 	message: string;
