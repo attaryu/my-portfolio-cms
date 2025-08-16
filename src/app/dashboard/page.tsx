@@ -1,6 +1,7 @@
-import Text from '@/components/ui/text';
 import { Camera } from 'lucide-react';
 import Image from 'next/image';
+
+import Text from '@/components/ui/text';
 
 export default function DashboardPage() {
 	return (
