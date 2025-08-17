@@ -1,4 +1,3 @@
-import { axiosPost } from '@/lib/axios';
 import { useMutation } from '@tanstack/react-query';
 import { AxiosError } from 'axios';
 import { ChevronUp, LaptopMinimal, LogOut, Moon, Sun } from 'lucide-react';
@@ -13,6 +12,7 @@ import {
 	DropdownMenuContent,
 	DropdownMenuGroup,
 	DropdownMenuItem,
+	DropdownMenuLabel,
 	DropdownMenuPortal,
 	DropdownMenuSeparator,
 	DropdownMenuSub,
@@ -27,6 +27,8 @@ import {
 	SidebarMenuItem,
 } from '@/components/ui/sidebar';
 import Text from '@/components/ui/text';
+
+import { axiosPost } from '@/lib/axios';
 
 export function DashboardSidebarFooter() {
 	const router = useRouter();
@@ -80,11 +82,15 @@ export function DashboardSidebarFooter() {
 							</DropdownMenuTrigger>
 						</SidebarMenuButton>
 
-						<DropdownMenuContent side="top" className="w-48">
+						<DropdownMenuContent side="top" className="min-w-48">
 							<DropdownMenuGroup>
+								<DropdownMenuLabel>Settings</DropdownMenuLabel>
+
 								{/* profile link */}
 								<DropdownMenuItem asChild>
-									<Link href="dashboard/profile">Profile</Link>
+									<Link href="dashboard/login-credential">
+										Login credential
+									</Link>
 								</DropdownMenuItem>
 
 								{/* theme selector */}
