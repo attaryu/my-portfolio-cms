@@ -5,26 +5,26 @@ import { emailOwner, passwordOwner } from './general';
 export const ownerCredentialPayloadSchema = z
 	.object({
 		email: emailOwner.optional(),
-		previous_password: passwordOwner.optional(),
+		current_password: passwordOwner.optional(),
 		new_password: passwordOwner.optional(),
 	})
 	.refine(
-		({ previous_password, new_password }) =>
-			new_password ? !!previous_password : false,
+		({ current_password, new_password }) =>
+			new_password ? !!current_password : true,
 		{
-			error: 'Previous password is required when creating a new password.',
-			path: ['previous_password'],
+			error: 'Current password is required when creating a new password.',
+			path: ['current_password'],
 		}
 	)
 	.refine(
-		({ new_password, previous_password }) =>
-			previous_password ? !!new_password : false,
+		({ new_password, current_password }) =>
+			current_password ? !!new_password : true,
 		{
-			error: 'New password is required when filling the previous password.',
+			error: 'New password is required when filling the current password.',
 			path: ['new_password'],
 		}
 	)
 	.refine((object) => Object.entries(object).length > 0, {
 		error: 'At least one field must be provided.',
-		path: ['email', 'previous_password', 'new_password'],
+		path: ['email', 'current_password', 'new_password'],
 	});

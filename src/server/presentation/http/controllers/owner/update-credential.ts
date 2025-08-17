@@ -15,7 +15,13 @@ export class IUpdateOwnerCredentialController implements IController {
 
 	async handle(request: HTTPRequest): Promise<IResponse> {
 		try {
-			const payload = ownerCredentialPayloadSchema.parse(request.body);
+			const { body } = request;
+
+			if (Object.entries(body as {}).length === 0) {
+				throw HttpError.badRequest('At least one field must be present');
+			}
+
+			const payload = ownerCredentialPayloadSchema.parse(body);
 			await this.updateOwnerCredentialUseCase.execute(payload);
 
 			request.cookies.delete('REFRESH_TOKEN');
@@ -27,7 +33,7 @@ export class IUpdateOwnerCredentialController implements IController {
 			};
 		} catch (error) {
 			if (error instanceof PasswordErrors.DoesNotMatch) {
-				throw HttpError.badRequest('Previous password does not match');
+				throw HttpError.badRequest('Current password does not match');
 			}
 
 			throw error;

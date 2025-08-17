@@ -20,11 +20,13 @@ export class UpdateOwnerCredentialUseCase
 			throw new OwnerUseCaseErrors.NotFound();
 		}
 
-		await owner.password.isSame(data.previous_password, this.hashing);
-
 		owner.email = data.email;
-		owner.password = await this.hashing.generateHash(data.new_password);
 		owner.refreshToken = undefined;
+
+		if (data.new_password && data.current_password) {
+			await owner.password.isSame(data.current_password, this.hashing);
+			owner.password = await this.hashing.generateHash(data.new_password);
+		}
 
 		await this.ownerRepository.updateOwner(owner);
 	}
