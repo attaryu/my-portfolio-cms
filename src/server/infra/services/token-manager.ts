@@ -70,7 +70,8 @@ export class TokenManager implements ITokenManager {
 
 			if (
 				outerError instanceof errors.JWSInvalid ||
-				outerError instanceof errors.JWTExpired
+				outerError instanceof errors.JWTExpired ||
+				outerError instanceof errors.JWSSignatureVerificationFailed
 			) {
 				return null;
 			}
