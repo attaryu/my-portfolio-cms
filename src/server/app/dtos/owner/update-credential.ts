@@ -1,5 +1,5 @@
 export interface IUpdateOwnerCredentialDTO {
-	email: string;
+	email?: string;
 	previous_password: string;
 	new_password: string;
 }
