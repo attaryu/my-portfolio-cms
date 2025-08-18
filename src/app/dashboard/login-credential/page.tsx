@@ -85,7 +85,7 @@ export default function ChangeLoginCredentialPage() {
 	});
 
 	return (
-		<main className="w-full h-[calc(100dvh_-_16px)] grid place-items-center">
+		<main className="sidebar-inner-content-fit grid place-items-center">
 			<Card className="min-w-sm w-fit max-w-lg">
 				<CardHeader>
 					<Text tag="h1" styling="h2" className="pb-0">

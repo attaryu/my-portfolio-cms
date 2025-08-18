@@ -10,7 +10,9 @@ export default function DashboardLayout({ children }: Props) {
 		<SidebarProvider>
 			<DashboardSidebar />
 
-			<div className="py-2 pr-2 w-full">{children}</div>
+			<div className="py-[var(--sidebar-content-layout-padding)] pr-[var(--sidebar-content-layout-padding)] w-full">
+				{children}
+			</div>
 		</SidebarProvider>
 	);
 }

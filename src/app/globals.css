@@ -122,7 +122,17 @@
 	}
 }
 
-@layer utilities {
+@layer components {
+	body {
+		--sidebar-content-layout-padding: 8px;
+	}
+
+	/* ensure inner content height and width fit correctly within a parent element that has padding, preventing overflow. */
+	.sidebar-inner-content-fit {
+		height: calc(100dvh - (var(--sidebar-content-layout-padding) * 2));
+		width: 100%;
+	}
+
 	.debug {
 		@apply outline outline-red-500;
 	}
