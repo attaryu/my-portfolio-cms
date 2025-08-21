@@ -28,7 +28,8 @@ import {
 } from '@/components/ui/sidebar';
 import Text from '@/components/ui/text';
 
-import { axiosPost } from '@/lib/axios';
+import { removeAccessToken } from '@/lib/access-token';
+import { axiosPost } from '@/lib/axios/actions/post';
 
 export function DashboardSidebarFooter() {
 	const router = useRouter();
@@ -36,14 +37,13 @@ export function DashboardSidebarFooter() {
 	const logoutMutation = useMutation({
 		mutationFn: () => axiosPost('/owner/logout'),
 		onSuccess: (data) => {
-			localStorage.removeItem('ACCESS_TOKEN');
+			removeAccessToken();
 			router.push('/login');
 			toast.success(data.message);
 		},
 		onError: (error) => {
 			if (error instanceof AxiosError) {
-				toast.error('Failed', {
-					description: error.response?.data.message,
+				toast.error(error.response?.data.message, {
 					action: {
 						label: 'Retry',
 						onClick: () => logoutMutation.mutate(),
