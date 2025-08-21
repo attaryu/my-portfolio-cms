@@ -5,7 +5,6 @@ import { del } from '@vercel/blob';
 import { handleUpload } from '@vercel/blob/client';
 import { NextResponse } from 'next/server';
 
-import { TokenManager } from '@/server/infra/services/token-manager';
 import { HttpError } from '@/server/presentation/http/helper/http-error';
 
 export async function POST(request: NextRequest): Promise<NextResponse> {
@@ -17,7 +16,7 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
 			request,
 			onBeforeGenerateToken: async (_pathname) => {
 				// implement access token check in the future
-				
+
 				return {
 					allowedContentTypes: [
 						'image/jpeg',
