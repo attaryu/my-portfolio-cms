@@ -3,7 +3,7 @@ import type { AxiosResponse } from 'axios';
 import type { ISuccessResponse } from '@/server/presentation/http/types/response';
 
 import { axiosInstance } from '../global';
-import { getAccessToken } from '../utils';
+import { getAccessToken } from '../../access-token';
 
 export type AxiosPatchParameter<PayloadType> = {
 	url: string;

@@ -1,6 +1,6 @@
 import { Label } from '@/components/ui/label';
-import Text from '@/components/ui/text';
 import { cn } from '@/lib/utils';
+import { FieldError } from './field-error';
 
 type Props = {
 	htmlFor: string;
@@ -23,11 +23,7 @@ export function DashboardFormLabel({
 
 			{children}
 
-			{errorMessage && (
-				<Text tag="small" styling="muted" className="text-red-500">
-					{errorMessage}
-				</Text>
-			)}
+			<FieldError message={errorMessage} />
 		</div>
 	);
 }

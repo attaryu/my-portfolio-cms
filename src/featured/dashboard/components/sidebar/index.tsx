@@ -34,7 +34,14 @@ const links: (LinkGroupType | LinkType)[] = [
 	{
 		type: 'group',
 		label: 'Main Menu',
-		sub: [{ type: 'link', label: 'Home', href: '/dashboard', icon: House }],
+		sub: [
+			{
+				type: 'link',
+				label: 'Home',
+				href: '/dashboard',
+				icon: House,
+			},
+		],
 	},
 	{
 		type: 'group',
@@ -43,7 +50,7 @@ const links: (LinkGroupType | LinkType)[] = [
 			{
 				type: 'link',
 				label: 'Owner Information',
-				href: '/dashboard/owner',
+				href: '/dashboard/owner-information',
 				icon: UserStar,
 			},
 			{

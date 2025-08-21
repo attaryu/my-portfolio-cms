@@ -1,9 +1,9 @@
 export interface IOwnerPublicInfoOutDTO {
 	id: string;
-	contact_email: string | null;
-	address: string | null;
-	cover_url: string | null;
-	about: string | null;
+	contact_email: string;
+	address: string;
+	cover_url: string;
+	about: string;
 	social_media: {
 		id: string;
 		name: string;

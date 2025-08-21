@@ -1,6 +1,6 @@
 import axios, { AxiosError } from 'axios';
 
-import { getAccessToken, storeAccessToken } from './utils';
+import { getAccessToken, storeAccessToken } from '../access-token';
 
 export const axiosInstance = axios.create({
 	baseURL: process.env.NEXT_PUBLIC_API_URL,
@@ -28,6 +28,8 @@ axiosInstance.interceptors.response.use(
 			if (tokenResponse.status === 200) {
 				storeAccessToken(tokenResponse.data.data.access_token);
 				return axiosInstance(error.config!);
+			} else {
+				return Promise.reject(error);
 			}
 		}
 
