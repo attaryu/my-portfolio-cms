@@ -2,12 +2,10 @@
 
 import { useMutation } from '@tanstack/react-query';
 import { AxiosError } from 'axios';
-import { Ban } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import { useForm } from 'react-hook-form';
 import { toast } from 'sonner';
 
-import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 import { Button } from '@/components/ui/button';
 import {
 	Card,
@@ -18,6 +16,7 @@ import {
 import { Input } from '@/components/ui/input';
 import Text from '@/components/ui/text';
 import { DashboardFormLabel } from '@/featured/dashboard/components/label';
+import { FieldRow } from '@/featured/dashboard/layouts/two-field-row';
 
 import { IFailResponse } from '@/server/presentation/http/types/response';
 
@@ -37,8 +36,7 @@ export default function ChangeLoginCredentialPage() {
 	const form = useForm<FormValues>();
 
 	const mutation = useMutation({
-		mutationFn: (data: FormValues) =>
-			axiosPatch({ url: '/owner/credential', data, includeCredential: true }),
+		mutationFn: (data: FormValues) => axiosPatch('/owner/credential', data),
 		onSuccess: () => {
 			router.push('/login');
 			toast.success('Success, please login again');
@@ -54,6 +52,8 @@ export default function ChangeLoginCredentialPage() {
 						});
 					}
 				}
+
+				toast.error(data.message);
 			}
 		},
 	});
@@ -99,18 +99,6 @@ export default function ChangeLoginCredentialPage() {
 
 				<CardContent>
 					<form className="space-y-6" onSubmit={onSubmit} id={formId}>
-						{mutation.isError && mutation.error instanceof AxiosError && (
-							<Alert variant="destructive">
-								<Ban />
-
-								<AlertTitle>Fail</AlertTitle>
-
-								<AlertDescription>
-									{mutation.error.response?.data?.message}
-								</AlertDescription>
-							</Alert>
-						)}
-
 						<DashboardFormLabel
 							htmlFor="email"
 							label="New email"
@@ -162,7 +150,7 @@ export default function ChangeLoginCredentialPage() {
 							/>
 						</DashboardFormLabel>
 
-						<div className="grid grid-cols-2 gap-4">
+						<FieldRow>
 							<DashboardFormLabel
 								htmlFor="new-password"
 								label="New password"
@@ -212,7 +200,7 @@ export default function ChangeLoginCredentialPage() {
 									})}
 								/>
 							</DashboardFormLabel>
-						</div>
+						</FieldRow>
 					</form>
 				</CardContent>
 
