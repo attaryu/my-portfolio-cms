@@ -4,12 +4,10 @@ import type { IFailResponse } from '@/server/presentation/http/types/response';
 
 import { useMutation } from '@tanstack/react-query';
 import { AxiosError } from 'axios';
-import { Ban } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import { useForm } from 'react-hook-form';
 import { toast } from 'sonner';
 
-import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 import { Button } from '@/components/ui/button';
 import {
 	Card,
@@ -18,9 +16,10 @@ import {
 	CardHeader,
 } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
 import Text from '@/components/ui/text';
 
+import { DashboardFormLabel } from '@/featured/dashboard/components/label';
+import { storeAccessToken } from '@/lib/access-token';
 import { axiosPost } from '@/lib/axios';
 
 const formId = 'login-form';
@@ -40,8 +39,8 @@ export default function LoginClientPage() {
 			axiosPost<{ access_token: string }>('/owner/login', data),
 		onSuccess: (response) => {
 			router.push('/dashboard');
-			localStorage.setItem('ACCESS_TOKEN', response.data?.access_token!);
 			toast.success(response.message);
+			storeAccessToken(response.data!.access_token);
 		},
 		onError: (error) => {
 			if (error instanceof AxiosError) {
@@ -54,6 +53,8 @@ export default function LoginClientPage() {
 						});
 					}
 				}
+
+				toast.error(error.response?.data.message);
 			}
 		},
 	});
@@ -75,23 +76,12 @@ export default function LoginClientPage() {
 
 				<CardContent>
 					<form className="space-y-6" id={formId} onSubmit={onSubmit}>
-						{/* error alert */}
-						{ownerLoginMutation.isError &&
-							ownerLoginMutation.error instanceof AxiosError && (
-								<Alert variant="destructive">
-									<Ban />
-
-									<AlertTitle>Fail</AlertTitle>
-
-									<AlertDescription>
-										{ownerLoginMutation.error.response?.data?.message}
-									</AlertDescription>
-								</Alert>
-							)}
-
-						<div className="space-y-2">
-							<Label htmlFor="email">Email</Label>
-
+						{/* email */}
+						<DashboardFormLabel
+							htmlFor="email"
+							label="Email"
+							errorMessage={formState.errors.email?.message}
+						>
 							<Input
 								id="email"
 								type="email"
@@ -109,15 +99,14 @@ export default function LoginClientPage() {
 									disabled: ownerLoginMutation.isPending,
 								})}
 							/>
+						</DashboardFormLabel>
 
-							<Text tag="small" styling="muted" className="text-red-500">
-								{formState.errors.email?.message}
-							</Text>
-						</div>
-
-						<div className="space-y-2">
-							<Label htmlFor="password">Password</Label>
-
+						{/* password */}
+						<DashboardFormLabel
+							htmlFor="password"
+							label="Password"
+							errorMessage={formState.errors.password?.message}
+						>
 							<Input
 								id="password"
 								type="password"
@@ -134,11 +123,7 @@ export default function LoginClientPage() {
 									disabled: ownerLoginMutation.isPending,
 								})}
 							/>
-
-							<Text tag="small" styling="muted" className="text-red-500">
-								{formState.errors.password?.message}
-							</Text>
-						</div>
+						</DashboardFormLabel>
 					</form>
 				</CardContent>
 

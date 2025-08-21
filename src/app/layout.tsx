@@ -17,7 +17,7 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-	title: "My Portfolio CMS",
+	title: 'My Portfolio CMS',
 	description: "M Attar's content management system dashboard",
 };
 
@@ -32,7 +32,7 @@ export default function RootLayout({
 				className={`${geistSans.variable} ${geistMono.variable} antialiased`}
 			>
 				<RootLayoutClient>{children}</RootLayoutClient>
-				<Toaster />
+				<Toaster position="top-center" />
 			</body>
 		</html>
 	);
