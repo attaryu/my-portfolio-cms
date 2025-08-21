@@ -19,23 +19,23 @@ import { Input } from '@/components/ui/input';
 import Text from '@/components/ui/text';
 
 import { DashboardFormLabel } from '@/featured/dashboard/components/label';
+
 import { storeAccessToken } from '@/lib/access-token';
-import { axiosPost } from '@/lib/axios';
+import { axiosPost } from '@/lib/axios/actions/post';
 
 const formId = 'login-form';
 
-interface LoginFormValues {
+interface FormValues {
 	email: string;
 	password: string;
 }
 
 export default function LoginClientPage() {
-	const { handleSubmit, register, formState, setError } =
-		useForm<LoginFormValues>();
+	const { handleSubmit, register, formState, setError } = useForm<FormValues>();
 	const router = useRouter();
 
 	const ownerLoginMutation = useMutation({
-		mutationFn: (data: LoginFormValues) =>
+		mutationFn: (data: FormValues) =>
 			axiosPost<{ access_token: string }>('/owner/login', data),
 		onSuccess: (response) => {
 			router.push('/dashboard');
@@ -48,7 +48,7 @@ export default function LoginClientPage() {
 
 				if (data.error) {
 					for (const [key, value] of Object.entries(data.error)) {
-						setError(key as keyof LoginFormValues, {
+						setError(key as keyof FormValues, {
 							message: value,
 						});
 					}
