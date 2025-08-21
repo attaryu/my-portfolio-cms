@@ -88,7 +88,7 @@ export function DashboardSidebarFooter() {
 
 								{/* profile link */}
 								<DropdownMenuItem asChild>
-									<Link href="dashboard/login-credential">
+									<Link href="/dashboard/login-credential">
 										Login credential
 									</Link>
 								</DropdownMenuItem>
