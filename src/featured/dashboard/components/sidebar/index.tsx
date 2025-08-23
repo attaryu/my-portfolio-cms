@@ -1,9 +1,14 @@
 'use client';
 
-import { Folder, House, ToolCase, UserStar } from 'lucide-react';
+import { ChevronRight, Folder, House, ToolCase, UserStar } from 'lucide-react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 
+import {
+	Collapsible,
+	CollapsibleContent,
+	CollapsibleTrigger,
+} from '@/components/ui/collapsible';
 import {
 	Sidebar,
 	SidebarContent,
@@ -13,6 +18,8 @@ import {
 	SidebarMenu,
 	SidebarMenuButton,
 	SidebarMenuItem,
+	SidebarMenuSub,
+	SidebarMenuSubItem,
 } from '@/components/ui/sidebar';
 import { DashboardSidebarFooter } from './sidebar-footer';
 import { DashboardSidebarHeader } from './sidebar-header';
@@ -21,18 +28,23 @@ type LinkType = {
 	type: 'link';
 	label: string;
 	href: string;
-	icon: React.ElementType;
+	icon?: React.ElementType;
 };
 
-type LinkGroupType = {
-	type: 'group';
+type CollapsibleSubGroupType = {
+	type: 'collapsible';
 	label: string;
+	icon: React.ElementType;
 	sub: LinkType[];
 };
 
-const links: (LinkGroupType | LinkType)[] = [
+type LinkGroupType = {
+	label: string;
+	sub: (LinkType | CollapsibleSubGroupType)[];
+};
+
+const links: LinkGroupType[] = [
 	{
-		type: 'group',
 		label: 'Main Menu',
 		sub: [
 			{
@@ -44,7 +56,6 @@ const links: (LinkGroupType | LinkType)[] = [
 		],
 	},
 	{
-		type: 'group',
 		label: 'Content',
 		sub: [
 			{
@@ -60,10 +71,21 @@ const links: (LinkGroupType | LinkType)[] = [
 				icon: Folder,
 			},
 			{
-				type: 'link',
+				type: 'collapsible',
 				label: 'Technologies',
-				href: '/dashboard/technologies',
 				icon: ToolCase,
+				sub: [
+					{
+						type: 'link',
+						label: 'All Technologies',
+						href: '/dashboard/technologies',
+					},
+					{
+						type: 'link',
+						label: 'Create Technology',
+						href: '/dashboard/technologies/create',
+					},
+				],
 			},
 		],
 	},
@@ -77,51 +99,68 @@ export function DashboardSidebar() {
 			<DashboardSidebarHeader />
 
 			<SidebarContent>
-				{links.map((link) =>
-					link.type === 'group' ? (
-						<SidebarGroup key={link.label}>
-							<SidebarGroupLabel>{link.label}</SidebarGroupLabel>
+				{links.map((link) => (
+					<SidebarGroup key={link.label}>
+						<SidebarGroupLabel>{link.label}</SidebarGroupLabel>
 
-							<SidebarGroupContent>
-								<SidebarMenu>
-									{link.sub.map((subLink) => (
+						<SidebarGroupContent>
+							<SidebarMenu>
+								{link.sub.map((subLink) =>
+									subLink.type === 'link' ? (
 										<SidebarMenuItem key={subLink.label}>
 											<SidebarMenuButton
 												asChild
 												isActive={pathname === subLink.href}
 											>
 												<Link href={subLink.href}>
-													<subLink.icon />
+													{subLink.icon && <subLink.icon />}
 
 													{subLink.label}
 												</Link>
 											</SidebarMenuButton>
 										</SidebarMenuItem>
-									))}
-								</SidebarMenu>
-							</SidebarGroupContent>
-						</SidebarGroup>
-					) : (
-						<SidebarGroup key={link.label}>
-							<SidebarGroupContent>
-								<SidebarMenu>
-									<SidebarMenuItem key={link.label}>
-										<SidebarMenuButton
-											asChild
-											isActive={pathname === link.href}
+									) : (
+										<Collapsible
+											key={subLink.label}
+											defaultOpen
+											className="group/collapsible"
 										>
-											<Link href={link.href}>
-												<link.icon />
+											<SidebarMenuItem>
+												<CollapsibleTrigger asChild>
+													<SidebarMenuButton className="w-full">
+														{subLink.icon && <subLink.icon />}
+														{subLink.label}
 
-												{link.label}
-											</Link>
-										</SidebarMenuButton>
-									</SidebarMenuItem>
-								</SidebarMenu>
-							</SidebarGroupContent>
-						</SidebarGroup>
-					)
-				)}
+														<ChevronRight className="ml-auto group-data-[state=open]/collapsible:rotate-90" />
+													</SidebarMenuButton>
+												</CollapsibleTrigger>
+
+												<CollapsibleContent>
+													<SidebarMenuSub>
+														{subLink.sub.map((subItem) => (
+															<SidebarMenuSubItem key={subItem.label}>
+																<SidebarMenuButton
+																	asChild
+																	isActive={pathname === subItem.href}
+																	className="w-full"
+																>
+																	<Link href={subItem.href}>
+																		{subItem.icon && <subItem.icon />}
+																		{subItem.label}
+																	</Link>
+																</SidebarMenuButton>
+															</SidebarMenuSubItem>
+														))}
+													</SidebarMenuSub>
+												</CollapsibleContent>
+											</SidebarMenuItem>
+										</Collapsible>
+									)
+								)}
+							</SidebarMenu>
+						</SidebarGroupContent>
+					</SidebarGroup>
+				))}
 			</SidebarContent>
 
 			<DashboardSidebarFooter />
