@@ -101,8 +101,7 @@ export default function OwnerInformationPage() {
 			let url: string = query.data?.data?.owner.cover_url ?? '';
 
 			if (data.cover_image && data.cover_image.length) {
-				const file = data.cover_image[0];
-				const cover = await upload(`/public/homepage/${file.name}`, file);
+				const cover = await upload('/public/homepage', data.cover_image[0]);
 
 				if (url) {
 					await del(url);

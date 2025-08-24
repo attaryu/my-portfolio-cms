@@ -5,7 +5,7 @@ import { axiosInstance } from './axios/global';
 const uploadUrl = '/blob-upload';
 
 export const upload = async (path: string, file: File) => {
-	const _file = await vercelBlobUpload(path, file, {
+	const _file = await vercelBlobUpload(path + '/' + file.name, file, {
 		access: 'public',
 		handleUploadUrl: '/api' + uploadUrl,
 	});
@@ -13,8 +13,8 @@ export const upload = async (path: string, file: File) => {
 	return _file;
 };
 
-export const del = async (pathAndFilename: string) => {
-	axiosInstance.delete(uploadUrl + `?blob-url=${pathAndFilename}`, {
+export const del = async (blobUrl: string) => {
+	axiosInstance.delete(uploadUrl + `?blob-url=${blobUrl}`, {
 		baseURL: '/api',
 	});
 };
