@@ -23,13 +23,14 @@ import { ImagePreview } from '@/featured/dashboard/components/image-preview';
 import { DashboardFormLabel } from '@/featured/dashboard/components/label';
 import { Loader } from '@/featured/dashboard/components/loader';
 import { useImagePreview } from '@/featured/dashboard/hooks/use-image-preview';
+import { ArrayField } from './array-field';
 
 import { FieldRow } from '@/featured/dashboard/layouts/two-field-row';
 
 import { axiosGet } from '@/lib/axios/actions/get';
 import { axiosPut } from '@/lib/axios/actions/put';
 import { del, upload } from '@/lib/file-storage';
-import { ArrayField } from './array-field';
+import { createImageValidation } from '@/lib/react-hook-form-image-validation';
 
 interface FormValue {
 	contact_email: string;
@@ -265,6 +266,10 @@ export default function OwnerInformationPage() {
 											message: 'Cover image must be a single file',
 										},
 										onChange: imagePreview.inputHandler,
+										validate: createImageValidation({
+											maxSize: 2,
+											acceptable: ['image/jpeg', 'image/png', 'image/jpg'],
+										}),
 									})}
 								/>
 							</DashboardFormLabel>
