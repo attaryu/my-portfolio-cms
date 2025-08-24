@@ -23,6 +23,7 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
 						'image/png',
 						'image/webp',
 						'image/jpg',
+						'image/svg+xml',
 					],
 					addRandomSuffix: true,
 				};
