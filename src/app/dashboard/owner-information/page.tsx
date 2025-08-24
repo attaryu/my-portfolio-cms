@@ -23,7 +23,7 @@ import { ImagePreview } from '@/featured/dashboard/components/image-preview';
 import { DashboardFormLabel } from '@/featured/dashboard/components/label';
 import { Loader } from '@/featured/dashboard/components/loader';
 import { useImagePreview } from '@/featured/dashboard/hooks/use-image-preview';
-import { ArrayField } from './array-field';
+import { ArrayField } from '@/featured/dashboard/components/array-field';
 
 import { FieldRow } from '@/featured/dashboard/layouts/two-field-row';
 
