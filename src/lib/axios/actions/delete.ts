@@ -8,22 +8,11 @@ export async function axiosDelete<PayloadType = unknown>(
 	url: string,
 	data?: PayloadType
 ) {
-	if (data) {
-		return axiosInstance
-			.post<
-				ISuccessResponse<unknown>,
-				AxiosResponse<ISuccessResponse<unknown>>,
-				PayloadType
-			>(url, data, {
-				method: 'DELETE',
-			})
-			.then((response) => response.data);
-	}
-
 	return axiosInstance
 		.delete<
 			ISuccessResponse<unknown>,
-			AxiosResponse<ISuccessResponse<unknown>>
-		>(url)
+			AxiosResponse<ISuccessResponse<unknown>>,
+			PayloadType
+		>(url, { data })
 		.then((response) => response.data);
 }
