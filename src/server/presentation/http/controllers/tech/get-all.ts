@@ -6,6 +6,7 @@ import type { IController } from '../controller';
 import { GeneralAppError } from '@/server/app/errors/app-error';
 import { HttpError } from '../../helper/http-error';
 import { techQueryParameter } from '../../validations/tech/query-parameter';
+import { paginationQueryParameter } from '../../validations/pagination-query-parameter';
 
 export class GetAllTechsController implements IController {
 	constructor(private readonly getAllTechsUseCase: IGetAllTechsUseCase) {}
@@ -23,7 +24,11 @@ export class GetAllTechsController implements IController {
 				throw HttpError.badRequest('Invalid limit query parameter');
 			}
 
-			const queryParameter = techQueryParameter.parse({
+			const queryParameter = paginationQueryParameter([
+				'name',
+				'created_at',
+				'updated_at',
+			]).parse({
 				search: request.url.searchParams.get('search'),
 				page: page ? parseInt(page, 10) : undefined,
 				limit: limit ? parseInt(limit, 10) : undefined,

@@ -29,8 +29,6 @@ export const paginationQueryParameter = (orderableColumn: string[]) =>
 			search: data.search ?? undefined,
 			page: data.page ?? undefined,
 			limit: data.limit ?? undefined,
-			orderBy:
-				data.order && data.sort
-					? { field: data.order, direction: data.sort }
-					: undefined,
+			sort: data.sort ?? undefined,
+			order: data.order ?? undefined,
 		}));
