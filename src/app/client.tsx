@@ -2,6 +2,7 @@
 
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { ThemeProvider } from 'next-themes';
+import { NuqsAdapter } from 'nuqs/adapters/next/app';
 import { useState } from 'react';
 
 export default function RootLayoutClient({
@@ -22,12 +23,8 @@ export default function RootLayoutClient({
 
 	return (
 		<QueryClientProvider client={queryClient}>
-			<ThemeProvider
-				attribute="class"
-				defaultTheme="system"
-				enableSystem
-			>
-				{children}
+			<ThemeProvider attribute="class" defaultTheme="system" enableSystem>
+				<NuqsAdapter>{children}</NuqsAdapter>
 			</ThemeProvider>
 		</QueryClientProvider>
 	);
