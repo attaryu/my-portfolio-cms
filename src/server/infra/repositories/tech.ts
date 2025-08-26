@@ -90,7 +90,9 @@ export class TechRepository implements ITechRepository {
 			skip: query?.skip,
 			take: query?.limit,
 			where: {
-				...(query?.search ? { name: { contains: query?.search } } : undefined),
+				...(query?.search
+					? { name: { contains: query.search, mode: 'insensitive' as const } }
+					: undefined),
 				...(query?.ids ? { id: { in: query.ids } } : undefined),
 			},
 			orderBy: {
