@@ -70,7 +70,7 @@ export default function OwnerInformationPage() {
 
 	const mutation = useMutation({
 		mutationFn: (data: MutationPayload) =>
-			axiosPut<MutationPayload, ResponseData>('/owner/public-info', data),
+			axiosPut<ResponseData, MutationPayload>('/owner/public-info', data),
 		onSuccess: (response) => {
 			form.reset({
 				address: response.data!.owner.address,

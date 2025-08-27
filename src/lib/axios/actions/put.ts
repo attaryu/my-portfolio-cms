@@ -4,7 +4,7 @@ import type { ISuccessResponse } from '@/server/presentation/http/types/response
 
 import { axiosInstance } from '../global';
 
-export async function axiosPut<PayloadType = unknown, ResponseType = unknown>(
+export async function axiosPut<ResponseType = unknown, PayloadType = unknown>(
 	url: string,
 	data: PayloadType
 ) {
