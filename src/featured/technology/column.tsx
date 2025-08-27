@@ -4,7 +4,7 @@ import type { IFailResponse } from '@/server/presentation/http/types/response';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { ColumnDef } from '@tanstack/react-table';
 import { AxiosError } from 'axios';
-import { ArrowDown, ArrowUp, ArrowUpDown, Ellipsis } from 'lucide-react';
+import { Ellipsis } from 'lucide-react';
 import Image from 'next/image';
 import Link from 'next/link';
 import { useState } from 'react';
@@ -22,6 +22,7 @@ import {
 	AlertDialogTitle,
 } from '@/components/ui/alert-dialog';
 import { Button } from '@/components/ui/button';
+import { Checkbox } from '@/components/ui/checkbox';
 import {
 	DropdownMenu,
 	DropdownMenuContent,
@@ -29,12 +30,11 @@ import {
 	DropdownMenuPortal,
 	DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
+import { SortingHeader } from '@/featured/data-table/components/sorting-header';
 
-import { Checkbox } from '@/components/ui/checkbox';
 import { axiosDelete } from '@/lib/axios/actions/delete';
 import { formatDate } from '@/lib/date';
 import { del } from '@/lib/file-storage';
-import SortingHeader from '@/featured/data-table/components/sorting-header';
 
 export const technologyColumns: ColumnDef<ITechOutDTO>[] = [
 	{
@@ -59,7 +59,7 @@ export const technologyColumns: ColumnDef<ITechOutDTO>[] = [
 	},
 	{
 		accessorKey: 'id',
-		header: 'ID',
+		header: 'Id',
 		enableSorting: false,
 	},
 	{
@@ -97,7 +97,7 @@ export const technologyColumns: ColumnDef<ITechOutDTO>[] = [
 	},
 	{
 		header: 'Actions',
-		cell: ({ row, table }) => {
+		cell: ({ row }) => {
 			const queryClient = useQueryClient();
 			const [open, setOpen] = useState(false);
 			const [loading, setLoading] = useState(false);

@@ -165,7 +165,7 @@ export default function AllTechnologiesPage() {
 												column.toggleVisibility(!!value)
 											}
 										>
-											{column.id}
+											{column.id.replaceAll('_', ' ')}
 										</DropdownMenuCheckboxItem>
 									))}
 							</DropdownMenuContent>

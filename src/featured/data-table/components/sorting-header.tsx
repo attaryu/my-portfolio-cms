@@ -2,14 +2,14 @@ import type { Column } from '@tanstack/react-table';
 
 import { ArrowDown, ArrowUp, ArrowUpDown, X } from 'lucide-react';
 
-import { Button } from '../../../components/ui/button';
+import { Button } from '@/components/ui/button';
 
 type Props<Data> = {
 	children: React.ReactNode;
 	column: Column<Data, unknown>;
 };
 
-export default function SortingHeader<Data>({ children, column }: Props<Data>) {
+export function SortingHeader<Data>({ children, column }: Props<Data>) {
 	const sorted = column.getIsSorted();
 
 	return (
