@@ -124,14 +124,15 @@ export default function AllTechnologiesPage() {
 	return (
 		<>
 			{/* main content */}
-			<main>
-				<Text tag="h1">Technologies</Text>
+			<main className="py-10">
+				<div className="flex gap-2 mb-8 items-end">
+					<Text tag="h1" className="mr-auto">
+						Technologies
+					</Text>
 
-				<div className="flex gap-2 mt-8 mb-4">
 					{/* delete selected row button */}
 					<Button
 						variant="destructive"
-						size="icon"
 						disabled={
 							!(
 								table.getIsSomePageRowsSelected() ||
@@ -140,14 +141,14 @@ export default function AllTechnologiesPage() {
 						}
 						onClick={() => setOpenDialog(true)}
 					>
-						<Trash />
+						<Trash /> Multiple
 					</Button>
 
 					{/* visibility column dropdown */}
 					<DropdownMenu>
 						<DropdownMenuTrigger asChild>
-							<Button variant="outline" size="icon">
-								<Columns2 />
+							<Button variant="outline">
+								<Columns2 /> Columns
 							</Button>
 						</DropdownMenuTrigger>
 
