@@ -133,7 +133,11 @@ export const technologyColumns: ColumnDef<ITechOutDTO>[] = [
 					{/* dropdown menu */}
 					<ActionDropdown disabled={loading || row.getIsSelected()}>
 						<DropdownMenuItem asChild>
-							<Link href={`/technologies/${id}/edit`}>Edit</Link>
+							<Link href={`/dashboard/technologies/${id}`}>Detail</Link>
+						</DropdownMenuItem>
+
+						<DropdownMenuItem asChild>
+							<Link href={`/dashboard/technologies/${id}?edit=true`}>Edit</Link>
 						</DropdownMenuItem>
 
 						<DropdownMenuItem
