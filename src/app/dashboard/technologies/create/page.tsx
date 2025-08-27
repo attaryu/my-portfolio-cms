@@ -5,7 +5,6 @@ import type { IFailResponse } from '@/server/presentation/http/types/response';
 
 import { useMutation } from '@tanstack/react-query';
 import { AxiosError } from 'axios';
-import { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { toast } from 'sonner';
 
@@ -41,12 +40,35 @@ type MutationPayload = {
 
 export default function CreateTechnologyPage() {
 	const form = useForm<FormValues>();
-	const [loading, setIsLoading] = useState(false);
 	const imagePreview = useImagePreview();
 
 	const mutation = useMutation({
-		mutationFn: (data: MutationPayload) =>
-			axiosPost<{ tech: ITechOutDTO }>('/techs', data),
+		mutationFn: async (data: FormValues) => {
+			let blobUrl: string;
+
+			try {
+				const blob = await upload('/public/techs', data.logo_url[0]);
+				blobUrl = blob.url;
+			} catch (error) {
+				throw new Error('Failed to upload logo');
+			}
+
+			try {
+				const response = await axiosPost<
+					{ tech: ITechOutDTO },
+					MutationPayload
+				>('/techs', {
+					name: data.name,
+					logo_url: blobUrl,
+				});
+
+				return response;
+			} catch (error) {
+				del(blobUrl);
+
+				throw error;
+			}
+		},
 		onSuccess: (response) => {
 			toast.success(response.message);
 			form.reset();
@@ -63,26 +85,14 @@ export default function CreateTechnologyPage() {
 
 				toast.error(response.message);
 			} else {
-				toast.error('An unexpected error occurred');
+				toast.error('An unexpected error occurred, check console');
+				console.error(error);
 			}
 		},
 	});
 
 	const handleSubmit = form.handleSubmit(async (data) => {
-		setIsLoading(true);
-
-		try {
-			const blobLogo = await upload('/public/techs', data.logo_url[0]);
-
-			mutation.mutate(
-				{ ...data, logo_url: blobLogo.url },
-				{ onError: () => del(blobLogo.url) }
-			);
-		} catch (error) {
-			toast.error((error as Error).message);
-		}
-
-		setIsLoading(false);
+		mutation.mutate(data);
 	});
 
 	return (
@@ -121,7 +131,7 @@ export default function CreateTechnologyPage() {
 										value: 32,
 										message: 'Name must be at most 32 characters long',
 									},
-									disabled: loading,
+									disabled: mutation.isPending,
 								})}
 							/>
 						</DashboardFormLabel>
@@ -146,7 +156,7 @@ export default function CreateTechnologyPage() {
 										maxSize: 2,
 										acceptable: ['image/svg+xml'],
 									}),
-									disabled: loading,
+									disabled: mutation.isPending,
 								})}
 							/>
 						</DashboardFormLabel>
@@ -160,12 +170,12 @@ export default function CreateTechnologyPage() {
 						type="reset"
 						variant="outline"
 						form={formId}
-						disabled={loading}
+						disabled={mutation.isPending}
 					>
 						Reset
 					</Button>
 
-					<Button type="submit" form={formId} disabled={loading}>
+					<Button type="submit" form={formId} disabled={mutation.isPending}>
 						Submit
 					</Button>
 				</CardFooter>
