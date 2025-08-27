@@ -60,7 +60,7 @@ export default function AllTechnologiesPage() {
 		useVisibilityColumn('tech-visibility');
 
 	const query = useQuery({
-		queryKey: ['technology', 'all', searchParams.toString()],
+		queryKey: ['technology', 'list', searchParams.toString()],
 		queryFn: () =>
 			axiosGet<{ techs: ITechOutDTO[] }>(
 				'/techs' + (searchParams.size ? `?${searchParams.toString()}` : '')
