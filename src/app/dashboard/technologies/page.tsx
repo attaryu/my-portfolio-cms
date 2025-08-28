@@ -4,10 +4,18 @@ import type { ITechOutDTO } from '@/server/app/dtos/tech/out';
 
 import type { IFailResponse } from '@/server/presentation/http/types/response';
 
-import { useMutation, useQuery } from '@tanstack/react-query';
+import { keepPreviousData, useMutation, useQuery } from '@tanstack/react-query';
 import { getCoreRowModel, useReactTable } from '@tanstack/react-table';
 import { AxiosError } from 'axios';
-import { Columns2, Trash } from 'lucide-react';
+import {
+	ChevronDown,
+	ChevronLeft,
+	ChevronRight,
+	Columns2,
+	Plus,
+	Trash,
+} from 'lucide-react';
+import Link from 'next/link';
 import { useSearchParams } from 'next/navigation';
 import { useState } from 'react';
 import { toast } from 'sonner';
@@ -28,6 +36,7 @@ import {
 	DropdownMenu,
 	DropdownMenuCheckboxItem,
 	DropdownMenuContent,
+	DropdownMenuItem,
 	DropdownMenuPortal,
 	DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
@@ -35,9 +44,11 @@ import Text from '@/components/ui/text';
 import { Loader } from '@/featured/dashboard/components/loader';
 import { DataTable } from '@/featured/data-table';
 import { SearchInput } from '@/featured/data-table/components/search-input';
+
 import { technologyColumns } from '@/featured/technology/column';
 
 import { useVisibilityColumn } from '@/featured/data-table/hooks/use-column-visibility';
+import { usePagination } from '@/featured/data-table/hooks/use-pagination';
 import { useSorting } from '@/featured/data-table/hooks/use-sorting';
 
 import { axiosDelete } from '@/lib/axios/actions/delete';
@@ -54,18 +65,22 @@ export default function AllTechnologiesPage() {
 	const [openDialog, setOpenDialog] = useState(false);
 	const [loading, setLoading] = useState(false);
 
-	const [rowSelection, onRowSelectionChange] = useState({});
-	const { sorting, onSortingChange } = useSorting();
-	const { columnVisibility, onColumnVisibilityChange } =
-		useVisibilityColumn('tech-visibility');
-
 	const query = useQuery({
 		queryKey: ['technology', 'list', searchParams.toString()],
 		queryFn: () =>
 			axiosGet<{ techs: ITechOutDTO[] }>(
 				'/techs' + (searchParams.size ? `?${searchParams.toString()}` : '')
 			),
+		placeholderData: keepPreviousData,
+		staleTime: 5000,
+		retry: 2,
 	});
+
+	const [rowSelection, onRowSelectionChange] = useState({});
+	const { sorting, onSortingChange } = useSorting();
+	const { columnVisibility, onColumnVisibilityChange } =
+		useVisibilityColumn('tech-visibility');
+	const { pagination, onPaginationChange } = usePagination();
 
 	const multipleDelete = useMutation({
 		mutationFn: (data: MutationPayload) => axiosDelete('/techs', data),
@@ -88,16 +103,21 @@ export default function AllTechnologiesPage() {
 	const table = useReactTable({
 		data: query.data?.data?.techs ?? [],
 		columns: technologyColumns,
+		getCoreRowModel: getCoreRowModel(),
 		onRowSelectionChange,
 		onColumnVisibilityChange,
 		onSortingChange,
-		getCoreRowModel: getCoreRowModel(),
+		onPaginationChange,
+		pageCount: query.data?.pagination?.pages,
+		rowCount: query.data?.pagination?.total,
 		manualSorting: true,
+		manualPagination: true,
 		getRowId: (originalRow) => originalRow.id,
 		state: {
 			sorting,
 			rowSelection,
 			columnVisibility,
+			pagination,
 		},
 	});
 
@@ -125,14 +145,13 @@ export default function AllTechnologiesPage() {
 		<>
 			{/* main content */}
 			<main className="py-10">
-				<div className="flex gap-2 mb-8 items-end">
-					<Text tag="h1" className="mr-auto">
-						Technologies
-					</Text>
+				<Text tag="h1">Technologies</Text>
 
+				<div className="flex gap-2 mb-8 mt-6 items-end sticky top-6 bg-background z-10 rounded-lg w-full">
 					{/* delete selected row button */}
 					<Button
 						variant="destructive"
+						className="mr-auto"
 						disabled={
 							!(
 								table.getIsSomePageRowsSelected() ||
@@ -173,7 +192,86 @@ export default function AllTechnologiesPage() {
 						</DropdownMenuPortal>
 					</DropdownMenu>
 
-					<SearchInput />
+					{/* previous page button */}
+					<Button
+						variant="outline"
+						disabled={
+							query.isPending || !table.getCanPreviousPage() || query.isError
+						}
+						onClick={table.previousPage}
+					>
+						<ChevronLeft />
+						Previous
+					</Button>
+
+					{/* select page */}
+					<DropdownMenu>
+						<DropdownMenuTrigger asChild>
+							<Button
+								disabled={query.isPending || query.isError}
+								variant="outline"
+							>
+								Page {query.data?.pagination?.page} <ChevronDown />
+							</Button>
+						</DropdownMenuTrigger>
+
+						<DropdownMenuPortal>
+							<DropdownMenuContent>
+								{Array.from(
+									{ length: query.data?.pagination!.pages ?? 0 },
+									(_, i) => (
+										<DropdownMenuItem
+											key={i}
+											disabled={query.isPending || pagination.pageIndex === i}
+											onClick={() => table.setPageIndex(i)}
+										>
+											Page {i + 1}
+										</DropdownMenuItem>
+									)
+								)}
+							</DropdownMenuContent>
+						</DropdownMenuPortal>
+					</DropdownMenu>
+
+					{/* next page button */}
+					<Button
+						variant="outline"
+						disabled={query.isPending || !table.getCanNextPage() || query.isError}
+						onClick={table.nextPage}
+					>
+						Next <ChevronRight />
+					</Button>
+
+					{/* page size */}
+					<DropdownMenu>
+						<DropdownMenuTrigger asChild>
+							<Button disabled={query.isPending || query.isError} variant="outline">
+								Show {pagination.pageSize} Data <ChevronDown />
+							</Button>
+						</DropdownMenuTrigger>
+
+						<DropdownMenuPortal>
+							<DropdownMenuContent>
+								{[5, 10, 15, 20, 25, 30].map((i) => (
+									<DropdownMenuItem
+										key={i}
+										disabled={query.isPending || i === pagination.pageSize}
+										onClick={() => table.setPageSize(i)}
+									>
+										{i} Data
+									</DropdownMenuItem>
+								))}
+							</DropdownMenuContent>
+						</DropdownMenuPortal>
+					</DropdownMenu>
+
+					<SearchInput disabled={query.isPending || query.isError} />
+
+					<Button asChild>
+						<Link href="/dashboard/technologies/create">
+							<Plus /> Add
+						</Link>
+					</Button>
 				</div>
 
 				<div>
