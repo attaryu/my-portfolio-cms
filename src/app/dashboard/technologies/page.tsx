@@ -61,9 +61,7 @@ type MutationPayload = {
 
 export default function AllTechnologiesPage() {
 	const searchParams = useSearchParams();
-
 	const [openDialog, setOpenDialog] = useState(false);
-	const [loading, setLoading] = useState(false);
 
 	const query = useQuery({
 		queryKey: ['technology', 'list', searchParams.toString()],
@@ -83,20 +81,50 @@ export default function AllTechnologiesPage() {
 	const { pagination, onPaginationChange } = usePagination();
 
 	const multipleDelete = useMutation({
-		mutationFn: (data: MutationPayload) => axiosDelete('/techs', data),
+		mutationFn: async ({
+			data,
+			blobUrls,
+		}: {
+			data: MutationPayload;
+			blobUrls: string[];
+		}) => {
+			try {
+				const response = await axiosDelete('/techs', data);
+
+				if (response.status === 'success') {
+					try {
+						for (const url of blobUrls) {
+							await del(url);
+						}
+					} catch (error) {
+						console.error(error);
+						toast.error(
+							'Failed to delete some logos from storage, see console for more details.'
+						);
+					}
+				}
+
+				return response;
+			} catch (error) {
+				throw error;
+			}
+		},
 		onSuccess: (response) => {
 			setOpenDialog(false);
-			toast.success(response.message);
+			onRowSelectionChange({});
 			query.refetch();
+			toast.success(response.message);
 		},
 		onError: (error) => {
 			if (error instanceof AxiosError) {
 				const response: IFailResponse = error.response?.data;
 				toast.error(response.message);
+			} else {
+				console.error(error);
+				toast.error(
+					'An unexpected error occurred, see console for more details.'
+				);
 			}
-		},
-		onSettled: () => {
-			setLoading(false);
 		},
 	});
 
@@ -122,23 +150,12 @@ export default function AllTechnologiesPage() {
 	});
 
 	async function multipleDeleteHandler() {
-		setLoading(true);
 		const techIds = Object.keys(rowSelection);
 
-		try {
-			for (const id of techIds) {
-				const logoUrl = table.getRow(id)?.original.logo_url;
-
-				if (logoUrl) {
-					await del(logoUrl);
-				}
-			}
-
-			multipleDelete.mutate({ techIds });
-		} catch (error) {
-			setLoading(false);
-			toast.error((error as Error).message);
-		}
+		multipleDelete.mutate({
+			data: { techIds },
+			blobUrls: techIds.map((id) => table.getRow(id).original.logo_url),
+		});
 	}
 
 	return (
@@ -236,7 +253,9 @@ export default function AllTechnologiesPage() {
 					{/* next page button */}
 					<Button
 						variant="outline"
-						disabled={query.isPending || !table.getCanNextPage() || query.isError}
+						disabled={
+							query.isPending || !table.getCanNextPage() || query.isError
+						}
 						onClick={table.nextPage}
 					>
 						Next <ChevronRight />
@@ -245,7 +264,10 @@ export default function AllTechnologiesPage() {
 					{/* page size */}
 					<DropdownMenu>
 						<DropdownMenuTrigger asChild>
-							<Button disabled={query.isPending || query.isError} variant="outline">
+							<Button
+								disabled={query.isPending || query.isError}
+								variant="outline"
+							>
 								Show {pagination.pageSize} Data <ChevronDown />
 							</Button>
 						</DropdownMenuTrigger>
@@ -299,12 +321,14 @@ export default function AllTechnologiesPage() {
 						</AlertDialogHeader>
 
 						<AlertDialogFooter>
-							<AlertDialogCancel disabled={loading}>Cancel</AlertDialogCancel>
+							<AlertDialogCancel disabled={multipleDelete.isPending}>
+								Cancel
+							</AlertDialogCancel>
 
 							<Button
 								variant="destructive"
 								onClick={multipleDeleteHandler}
-								disabled={loading}
+								disabled={multipleDelete.isPending}
 							>
 								Delete
 							</Button>
