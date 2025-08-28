@@ -5,7 +5,7 @@ import { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 
-export function SearchInput() {
+export function SearchInput({ disabled }: { disabled?: boolean }) {
 	const [searchParameter, setSearchParameter] = useQueryState('search');
 	const [local, setLocal] = useState(searchParameter ?? '');
 
@@ -22,13 +22,14 @@ export function SearchInput() {
 			<Input
 				type="text"
 				placeholder="Search..."
-				className="w-56"
+				className="w-48"
 				value={local}
 				onChange={(event) => setLocal(event.target.value)}
+				disabled={disabled}
 				onKeyDown={(e) => e.key === 'Enter' && setSearchParams()}
 			/>
 
-			<Button onClick={setSearchParams} size="icon">
+			<Button onClick={setSearchParams} size="icon" disabled={disabled}>
 				<Search />
 			</Button>
 		</div>
