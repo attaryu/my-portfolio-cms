@@ -1,25 +1,20 @@
 import { VisibilityState } from '@tanstack/react-table';
 import { useEffect, useState } from 'react';
 
-export function useVisibilityColumn(
-	cacheKey: string,
-	defaultVisibility: VisibilityState = {}
-) {
+export function useVisibilityColumn(cacheKey: string) {
 	const [columnVisibility, onColumnVisibilityChange] =
 		useState<VisibilityState>(() => {
 			if (typeof window !== 'undefined') {
 				const cachedVisibility = localStorage.getItem(cacheKey);
 
 				try {
-					return cachedVisibility
-						? JSON.parse(cachedVisibility)
-						: defaultVisibility;
+					return cachedVisibility ? JSON.parse(cachedVisibility) : {};
 				} catch {
 					localStorage.removeItem(cacheKey);
 				}
 			}
 
-			return defaultVisibility;
+			return {};
 		});
 
 	useEffect(() => {
