@@ -3,7 +3,7 @@ import { cn } from '@/lib/utils';
 import { FieldError } from './field-error';
 
 type Props = {
-	htmlFor: string;
+	htmlFor?: string;
 	label: string;
 	children: React.ReactNode;
 	errorMessage?: string;
