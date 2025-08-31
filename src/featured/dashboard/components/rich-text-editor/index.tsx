@@ -1,28 +1,18 @@
 'use client';
 
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from '@/components/ui/select';
-import { Separator } from '@/components/ui/separator';
 import TextAlign from '@tiptap/extension-text-align';
-import { EditorContent, useEditor, useEditorState } from '@tiptap/react';
+import { EditorContent, useEditor } from '@tiptap/react';
 import StarterKit from '@tiptap/starter-kit';
-import {
-  AlignJustify,
-  AlignLeft,
-  Bold,
-  Italic,
-  List,
-  ListOrdered,
-  Underline
-} from 'lucide-react';
-import { ButtonController } from './button-controller';
+import { useEffect } from 'react';
+import { Toolbar } from './toolbar';
 
-export function RichTextEditor() {
+type Props = {
+	value?: string;
+	onChange?: (value?: string) => void;
+	disabled?: boolean;
+};
+
+export function RichTextEditor({ disabled, onChange, value }: Props) {
 	const editor = useEditor({
 		extensions: [
 			StarterKit.configure({
@@ -42,123 +32,31 @@ export function RichTextEditor() {
 				class: 'px-3 py-2 focus:outline-none min-h-32 md:text-sm text-base',
 			},
 		},
+		editable: !disabled,
+		content: value ? JSON.parse(value) : undefined,
+		onUpdate: ({ editor }) => {
+			if (editor.isEmpty) {
+				onChange?.(undefined);
+			} else {
+				onChange?.(JSON.stringify(editor.getJSON()));
+			}
+		},
 		immediatelyRender: false,
 	});
 
-	const editorState = useEditorState({
-		editor,
-		selector: ({ editor }) => ({
-			isBold: editor?.isActive('bold'),
-			isItalic: editor?.isActive('italic'),
-			isUnderline: editor?.isActive('underline'),
-			isBulletList: editor?.isActive('bulletList'),
-			isOrderedList: editor?.isActive('orderedList'),
-			isLeft: editor?.isActive({ textAlign: 'left' }),
-			isJustify: editor?.isActive({ textAlign: 'justify' }),
-		}),
-	});
+	useEffect(() => {
+		if (editor && !editor.isEmpty) {
+			const json = JSON.stringify(editor.getJSON());
+
+			if (json !== value) {
+				editor.commands.setContent(json, { emitUpdate: false });
+			}
+		}
+	}, [value, editor]);
 
 	return (
 		<div className="border-input dark:bg-input/30 min-h-16 w-full rounded-md border bg-transparent shadow-xs">
-			<div className="border-b border-input flex shadow-xs dark:bg-input/30 h-10 rounded-t-md">
-				<Select defaultValue="paragraph">
-					<SelectTrigger className="rounded-none w-32 !h-10 border-none hover:bg-muted rounded-tl-md">
-						<SelectValue />
-					</SelectTrigger>
-
-					<SelectContent>
-						<SelectItem
-							value="heading-1"
-							onClick={() =>
-								editor?.chain().setHeading({ level: 1 }).focus().run()
-							}
-						>
-							Heading 1
-						</SelectItem>
-
-						<SelectItem
-							value="heading-2"
-							onClick={() =>
-								editor?.chain().setHeading({ level: 2 }).focus().run()
-							}
-						>
-							Heading 2
-						</SelectItem>
-
-						<SelectItem
-							value="heading-3"
-							onClick={() =>
-								editor?.chain().setHeading({ level: 3 }).focus().run()
-							}
-						>
-							Heading 3
-						</SelectItem>
-
-						<SelectItem
-							value="paragraph"
-							onClick={() => editor?.chain().setParagraph().focus().run()}
-						>
-							Paragraph
-						</SelectItem>
-					</SelectContent>
-				</Select>
-
-				<Separator orientation="vertical" />
-
-				<ButtonController
-					active={editorState?.isBold}
-					onClick={() => editor?.chain().toggleBold().focus().run()}
-				>
-					<Bold />
-				</ButtonController>
-
-				<ButtonController
-					active={editorState?.isItalic}
-					onClick={() => editor?.chain().toggleItalic().focus().run()}
-				>
-					<Italic />
-				</ButtonController>
-
-				<ButtonController
-					active={editorState?.isUnderline}
-					onClick={() => editor?.chain().toggleUnderline().focus().run()}
-				>
-					<Underline />
-				</ButtonController>
-
-				<Separator orientation="vertical" />
-
-				<ButtonController
-					active={editorState?.isBulletList}
-					onClick={() => editor?.chain().toggleBulletList().focus().run()}
-				>
-					<List />
-				</ButtonController>
-
-				<ButtonController
-					active={editorState?.isOrderedList}
-					onClick={() => editor?.chain().toggleOrderedList().focus().run()}
-				>
-					<ListOrdered />
-				</ButtonController>
-
-				<Separator orientation="vertical" />
-
-				<ButtonController
-					active={editorState?.isLeft}
-					onClick={() => editor?.chain().setTextAlign('left').focus().run()}
-				>
-					<AlignLeft />
-				</ButtonController>
-
-				<ButtonController
-					active={editorState?.isJustify}
-					onClick={() => editor?.chain().setTextAlign('justify').focus().run()}
-				>
-					<AlignJustify />
-				</ButtonController>
-			</div>
-
+			<Toolbar editor={editor} />
 			<EditorContent editor={editor} />
 		</div>
 	);
