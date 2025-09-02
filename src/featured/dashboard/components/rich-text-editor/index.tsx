@@ -4,6 +4,7 @@ import TextAlign from '@tiptap/extension-text-align';
 import { EditorContent, useEditor } from '@tiptap/react';
 import StarterKit from '@tiptap/starter-kit';
 import { useEffect } from 'react';
+
 import { Toolbar } from './toolbar';
 
 type Props = {
@@ -29,7 +30,7 @@ export function RichTextEditor({ disabled, onChange, value }: Props) {
 		],
 		editorProps: {
 			attributes: {
-				class: 'px-3 py-2 focus:outline-none min-h-32 md:text-sm text-base',
+				class: 'px-3 py-2 focus:outline-none min-h-32 rich-text-container max-h-[600px] overflow-y-auto',
 			},
 		},
 		editable: !disabled,
@@ -55,7 +56,7 @@ export function RichTextEditor({ disabled, onChange, value }: Props) {
 	}, [value, editor]);
 
 	return (
-		<div className="border-input dark:bg-input/30 min-h-16 w-full rounded-md border bg-transparent shadow-xs">
+		<div className="border-input relative dark:bg-input/30 min-h-16 w-full rounded-md border bg-transparent shadow-xs">
 			<Toolbar editor={editor} />
 			<EditorContent editor={editor} />
 		</div>

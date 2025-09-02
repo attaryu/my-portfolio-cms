@@ -1,23 +1,25 @@
-import {
-	Select,
-	SelectContent,
-	SelectItem,
-	SelectTrigger,
-	SelectValue,
-} from '@/components/ui/select';
-import { Separator } from '@/components/ui/separator';
 import { useEditorState, type Editor } from '@tiptap/react';
-import { ButtonController } from './button-controller';
 import {
 	AlignJustify,
 	AlignLeft,
 	Bold,
+	ChevronsUpDown,
 	Italic,
 	List,
 	ListOrdered,
 	Underline,
 } from 'lucide-react';
 import { memo } from 'react';
+
+import { Button } from '@/components/ui/button';
+import {
+	DropdownMenu,
+	DropdownMenuContent,
+	DropdownMenuItem,
+	DropdownMenuTrigger,
+} from '@/components/ui/dropdown-menu';
+import { Separator } from '@/components/ui/separator';
+import { ButtonController } from './button-controller';
 
 type Props = {
 	editor: Editor | null;
@@ -26,60 +28,77 @@ type Props = {
 function _Toolbar({ editor }: Props) {
 	const editorState = useEditorState({
 		editor,
-		selector: ({ editor }) => ({
-			isBold: editor?.isActive('bold'),
-			isItalic: editor?.isActive('italic'),
-			isUnderline: editor?.isActive('underline'),
-			isBulletList: editor?.isActive('bulletList'),
-			isOrderedList: editor?.isActive('orderedList'),
-			isLeft: editor?.isActive({ textAlign: 'left' }),
-			isJustify: editor?.isActive({ textAlign: 'justify' }),
-		}),
+		selector: ({ editor }) => {
+			const currentSelectedFormat =
+				editor?.getAttributes('heading')?.level ?? 0;
+
+			return {
+				isBold: editor?.isActive('bold'),
+				isItalic: editor?.isActive('italic'),
+				isUnderline: editor?.isActive('underline'),
+				isBulletList: editor?.isActive('bulletList'),
+				isOrderedList: editor?.isActive('orderedList'),
+				isLeft: editor?.isActive({ textAlign: 'left' }),
+				isJustify: editor?.isActive({ textAlign: 'justify' }),
+				currentSelectedFormat:
+					currentSelectedFormat === 1
+						? 'Heading 1'
+						: currentSelectedFormat === 2
+						? 'Heading 2'
+						: currentSelectedFormat === 3
+						? 'Heading 3'
+						: 'Paragraph',
+			};
+		},
 	});
 
 	return (
-		<div className="border-b border-input flex shadow-xs dark:bg-input/30 h-10 rounded-t-md">
-			<Select defaultValue="paragraph">
-				<SelectTrigger className="rounded-none w-32 !h-10 border-none hover:bg-muted rounded-tl-md">
-					<SelectValue />
-				</SelectTrigger>
+		<div className="flex shadow-xs dark:bg-input/30 h-10 rounded-t-md sticky top-10 z-10 bg-background ring-1 ring-input">
+			<DropdownMenu>
+				<DropdownMenuTrigger asChild>
+					<Button
+						variant="ghost"
+						className="rounded-none w-32 !h-10 rounded-tl-md"
+					>
+						{editorState?.currentSelectedFormat}
 
-				<SelectContent>
-					<SelectItem
-						value="heading-1"
-						onClick={() =>
-							editor?.chain().setHeading({ level: 1 }).focus().run()
-						}
+						<ChevronsUpDown />
+					</Button>
+				</DropdownMenuTrigger>
+
+				<DropdownMenuContent>
+					<DropdownMenuItem
+						onClick={() => {
+							console.log('run');
+							editor?.chain().setHeading({ level: 1 }).focus().run();
+						}}
 					>
 						Heading 1
-					</SelectItem>
+					</DropdownMenuItem>
 
-					<SelectItem
-						value="heading-2"
+					<DropdownMenuItem
 						onClick={() =>
 							editor?.chain().setHeading({ level: 2 }).focus().run()
 						}
 					>
 						Heading 2
-					</SelectItem>
+					</DropdownMenuItem>
 
-					<SelectItem
-						value="heading-3"
+					<DropdownMenuItem
 						onClick={() =>
 							editor?.chain().setHeading({ level: 3 }).focus().run()
 						}
 					>
 						Heading 3
-					</SelectItem>
+					</DropdownMenuItem>
 
-					<SelectItem
-						value="paragraph"
+					<DropdownMenuItem
 						onClick={() => editor?.chain().setParagraph().focus().run()}
 					>
 						Paragraph
-					</SelectItem>
-				</SelectContent>
-			</Select>
+					</DropdownMenuItem>
+				</DropdownMenuContent>
+			</DropdownMenu>
 
 			<Separator orientation="vertical" />
 
