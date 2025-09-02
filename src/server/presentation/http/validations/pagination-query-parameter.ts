@@ -7,7 +7,7 @@ export const paginationQueryParameter = (orderableColumn: string[]) =>
 		.object({
 			search: z.string().optional().nullable(),
 			page: z.number().min(1).optional().nullable(),
-			limit: z.number().min(1).max(50).optional().nullable(),
+			limit: z.number().min(1).optional().nullable(),
 			order: z.enum(orderableColumn).optional().nullable(),
 			sort: z.enum(['asc', 'desc']).optional().nullable(),
 		})
