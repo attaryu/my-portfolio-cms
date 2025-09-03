@@ -1,59 +1,62 @@
 'use client';
 
+import type { JSONContent } from '@tiptap/react';
+
+import Image from '@tiptap/extension-image';
 import TextAlign from '@tiptap/extension-text-align';
 import { EditorContent, useEditor } from '@tiptap/react';
 import StarterKit from '@tiptap/starter-kit';
-import { useEffect } from 'react';
+import Link from '@tiptap/extension-link';
+import { memo } from 'react';
 
 import { Toolbar } from './toolbar';
 
 type Props = {
-	value?: string;
-	onChange?: (value?: string) => void;
+	value?: JSONContent;
+	onChange?: (value?: JSONContent) => void;
 	disabled?: boolean;
 };
 
-export function RichTextEditor({ disabled, onChange, value }: Props) {
+const extensions = [
+	StarterKit.configure({
+		heading: { levels: [1, 2, 3] },
+		blockquote: false,
+		code: false,
+		codeBlock: false,
+	}),
+	TextAlign.configure({
+		types: ['heading', 'paragraph'],
+		alignments: ['left', 'justify', 'center'],
+		defaultAlignment: 'justify',
+	}),
+	Image.configure({ allowBase64: true }),
+	Link.configure({
+		protocols: ['https'],
+		defaultProtocol: 'https',
+		autolink: true,
+	}),
+];
+
+function _RichTextEditor({ disabled, onChange, value }: Props) {
 	const editor = useEditor({
-		extensions: [
-			StarterKit.configure({
-				heading: { levels: [1, 2, 3] },
-				blockquote: false,
-				code: false,
-				codeBlock: false,
-			}),
-			TextAlign.configure({
-				types: ['heading', 'paragraph'],
-				alignments: ['left', 'justify'],
-				defaultAlignment: 'justify',
-			}),
-		],
+		extensions,
+		editable: !disabled,
+		content: value,
+		immediatelyRender: false,
 		editorProps: {
 			attributes: {
-				class: 'px-3 py-2 focus:outline-none min-h-32 rich-text-container max-h-[600px] overflow-y-auto',
+				class:
+					'px-3 py-2 focus:outline-none min-h-32 rich-text-container max-h-[600px] overflow-y-auto',
 			},
 		},
-		editable: !disabled,
-		content: value ? JSON.parse(value) : undefined,
 		onUpdate: ({ editor }) => {
 			if (editor.isEmpty) {
 				onChange?.(undefined);
 			} else {
-				onChange?.(JSON.stringify(editor.getJSON()));
+				onChange?.(editor.getJSON());
 			}
 		},
-		immediatelyRender: false,
 	});
-
-	useEffect(() => {
-		if (editor && !editor.isEmpty) {
-			const json = JSON.stringify(editor.getJSON());
-
-			if (json !== value) {
-				editor.commands.setContent(json, { emitUpdate: false });
-			}
-		}
-	}, [value, editor]);
 
 	return (
 		<div className="border-input relative dark:bg-input/30 min-h-16 w-full rounded-md border bg-transparent shadow-xs">
@@ -62,3 +65,5 @@ export function RichTextEditor({ disabled, onChange, value }: Props) {
 		</div>
 	);
 }
+
+export const RichTextEditor = memo(_RichTextEditor);

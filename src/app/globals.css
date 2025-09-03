@@ -120,6 +120,34 @@
 	body {
 		@apply bg-background text-foreground;
 	}
+
+	.rich-text-container > h1 {
+		@apply scroll-m-20 text-start text-4xl font-extrabold tracking-tight text-balance mb-4 mt-8;
+	}
+
+	.rich-text-container > h2 {
+		@apply scroll-m-20 text-start pb-2 text-3xl font-semibold tracking-tight first:mt-0 mt-8 mb-2;
+	}
+
+	.rich-text-container > h3 {
+		@apply scroll-m-20 text-start text-2xl font-semibold tracking-tight mt-8 mb-2;
+	}
+
+	.rich-text-container > p {
+		@apply scroll-m-20 text-start leading-7 mb-4;
+	}
+
+	.rich-text-container > ul {
+		@apply my-4 ml-8 list-disc [&>li]:mt-2;
+	}
+
+	.rich-text-container > ol {
+		@apply my-4 ml-8 list-decimal [&>li]:mt-2;
+	}
+
+	.rich-text-container > * > a {
+		@apply font-medium underline underline-offset-2 text-primary cursor-pointer;
+	}
 }
 
 @layer components {
