@@ -3,11 +3,11 @@
 import type { JSONContent } from '@tiptap/react';
 
 import Image from '@tiptap/extension-image';
+import Link from '@tiptap/extension-link';
 import TextAlign from '@tiptap/extension-text-align';
 import { EditorContent, useEditor } from '@tiptap/react';
 import StarterKit from '@tiptap/starter-kit';
-import Link from '@tiptap/extension-link';
-import { memo } from 'react';
+import { memo, useEffect } from 'react';
 
 import { Toolbar } from './toolbar';
 
@@ -57,6 +57,22 @@ function _RichTextEditor({ disabled, onChange, value }: Props) {
 			}
 		},
 	});
+
+	/**
+	 * Reset content based on external changes
+	 */
+	useEffect(() => {
+		if (editor) {
+			if (value && JSON.stringify(value) !== JSON.stringify(editor.getJSON())) {
+				/**
+				 * Reset to default value because the current content does not match the external value
+				 */
+				editor.commands.setContent(value);
+			} else if (!value) {
+				editor.commands.clearContent(false);
+			}
+		}
+	}, [value, editor]);
 
 	return (
 		<div className="border-input relative dark:bg-input/30 min-h-16 w-full rounded-md border bg-transparent shadow-xs">
