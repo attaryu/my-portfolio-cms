@@ -55,7 +55,15 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
 
 export async function DELETE(request: NextRequest): Promise<NextResponse> {
 	const urlToDelete = request.nextUrl.searchParams.get('blob-url');
-	await del(urlToDelete as string);
+
+	if (!urlToDelete) {
+		return NextResponse.json(
+			{ error: 'Missing blob-url query parameter' },
+			{ status: 400 }
+		);
+	}
+
+	await del(JSON.parse(urlToDelete) as string[]);
 
 	return NextResponse.json({ success: true });
 }
